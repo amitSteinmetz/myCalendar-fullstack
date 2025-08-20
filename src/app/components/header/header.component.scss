@@ -1,0 +1,157 @@
+@import "../../../styles.scss";
+
+.header-container {
+  height: 3rem;
+  background-color: $basic-orange;
+
+  .header-content {
+    position: relative;
+    height: 100%;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+
+    .header__change-calender-font-buttons {
+      display: none;
+      gap: 4px;
+      position: absolute;
+      left: 65px;
+      top: 13px;
+
+      .change-calender-font-btn {
+        display: block;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+    }
+
+    #header__login-link {
+      background-color: $darker-orange;
+      color: white;
+      padding: 0.5rem;
+      @include flex-center;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    #header__mobile-title {
+      font-size: 1.8rem;
+      line-height: 1.8rem;
+      margin-top: 0.6rem;
+      text-align: center;
+      width: 72%;
+    }
+
+    .header__menu {
+      display: flex;
+
+      .menu__list {
+        display: none;
+        flex-direction: row-reverse;
+
+        .list-item {
+          max-width: 65px;
+          text-align: center;
+          padding: 7px 2px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #df8f20;
+          }
+        }
+
+        .active-link {
+          background-color: #f1f1f1;
+          color: #222222;
+
+          &:hover {
+            background-color: #f1f1f1;
+          }
+        }
+
+        .menu__list__additional-items-container {
+          position: relative;
+          @include flex-center;
+
+          &:hover > .additional-items-container__list {
+            display: block;
+          }
+
+          &:hover {
+            background-color: #d77e00;
+          }
+
+          .additional-items-container__title {
+            height: 100%;
+            @include flex-center;
+            gap: 4px;
+            padding: 0 8px;
+          }
+
+          .additional-items-container__list {
+            display: none;
+            position: absolute;
+            width: 120px;
+            top: 100%;
+            right: 0;
+
+            .additional-items__item {
+              text-align: right;
+              font-size: 13px;
+              padding: 8px 6px 8px 8px;
+              background-color: #d77e00;
+              cursor: pointer;
+
+              &:hover {
+                background-color: #b66f0d;
+              }
+            }
+          }
+        }
+      }
+
+      #header__desktop-logo {
+        padding: 7px 10px;
+      }
+
+      #header__mobile-menu-img {
+        cursor: pointer;
+      }
+    }
+
+    #header__desktop-logo {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 980px) {
+  .header-container {
+    height: 44px;
+
+    .header-content {
+      width: 970px;
+      margin: 0 auto;
+
+      #header__login-link {
+        text-decoration: none;
+      }
+      #header__mobile-title,
+      #header__mobile-menu-img {
+        display: none;
+      }
+
+      #header__desktop-logo {
+        display: inline-block;
+      }
+
+      .header__change-calender-font-buttons,
+      .header__menu .menu__list {
+        display: flex;
+      }
+    }
+  }
+}

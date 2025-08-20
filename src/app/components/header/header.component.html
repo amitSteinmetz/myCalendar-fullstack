@@ -1,0 +1,60 @@
+<div class="header-container">
+  <div class="header-content">
+    <a href="" id="header__login-link" class="fs-sm">כניסה</a>
+
+    <div class="header__change-calender-font-buttons">
+      <img
+        class="change-calender-font-btn"
+        src="assets/images/header/plus.png"
+        alt="הגדל פונט לוח"
+      />
+      <img
+        class="change-calender-font-btn"
+        src="assets/images/header/minus.png"
+        alt="הקטן פונט לוח"
+      />
+    </div>
+
+    <div id="header__mobile-title" class="fw-bold">לוח שנה עברי לועזי</div>
+
+    <div class="header__menu">
+      <img
+        id="header__mobile-menu-img"
+        src="assets/images/header/menu.png"
+        alt="תפריט"
+      />
+
+      <div class="menu__list">
+        <div
+          *ngFor="let mainLink of mainLinks; let i = index"
+          [ngClass]="{'active-link': i === 0}"
+          class="list-item fs-sm"
+        >
+          {{ mainLink }}
+        </div>
+
+        <div class="menu__list__additional-items-container">
+          <div class="additional-items-container__title fs-sm fw-bold">
+            <img src="assets/images/header/arrow-down2.png" alt="arrow down" />
+            עוד
+          </div>
+
+          <div class="additional-items-container__list">
+            <div
+              *ngFor="let additionalLink of additionalLinks"
+              class="additional-items__item"
+            >
+              {{ additionalLink }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <img
+        id="header__desktop-logo"
+        src="assets/images/header/2net-logo-white.png"
+        alt="logo"
+      />
+    </div>
+  </div>
+</div>
