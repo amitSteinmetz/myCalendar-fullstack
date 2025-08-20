@@ -1,17 +1,72 @@
 @import "../../../styles.scss";
 
 .current-time-details {
-    padding-top: 5px;
+  padding-top: 5px;
   @include flex-center;
   flex-direction: column;
 
   .current-time-details__date {
     color: $primary-blue;
-    margin: 0.3rem 0;
+    margin: 0.1rem 0;
   }
+  .current-time-details__mobile-subtitle {
+    margin-top: 0.1rem;
+    .mobile-subtitle__config-link {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
 
-  .mobile-subtitle__config-link {
-    text-decoration: underline;
+.time-navigation-buttons {
+  @include flex-center;
+  flex-direction: row-reverse;
+  background-color: #f1f1f1;
+  padding: 1.5% 0;
+  margin-top: 5px;
+
+  .time-navigation__btn {
+    @include flex-center;
+    flex-direction: column;
+    width: 15%;
+    height: 2.9rem;
+    text-align: center;
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 2px;
     cursor: pointer;
+    margin: 0 2px;
+
+    .btn-title {
+      margin-top: 1%;
+      line-height: 0.9rem;
+      font-size: 14.4px;
+      color: #555;
+      font-weight: bold;
+      max-width: 65px;
+    }
+
+    .btn-value {
+      color: #999;
+      font-size: 0.7rem;
+    }
+
+    .navigation-arrows {
+      margin: 0.15rem 0 0.25rem;
+    }
+  }
+}
+
+.language-mode-buttons,
+.general-buttons,
+.time-navigation-content {
+  display: none;
+}
+
+@media (min-width: 980px) {
+  .language-mode-buttons,
+  .general-buttons,
+  .time-navigation-content {
+    display: block;
   }
 }
