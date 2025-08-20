@@ -45,11 +45,11 @@
       width: 72%;
     }
 
-    .header__menu {
-      display: flex;
+    .header__desktop-menu {
+      display: none;
 
       .menu__list {
-        display: none;
+        display: flex;
         flex-direction: row-reverse;
 
         .list-item {
@@ -115,15 +115,34 @@
 
       #header__desktop-logo {
         padding: 7px 10px;
-      }
-
-      #header__mobile-menu-img {
-        cursor: pointer;
+        display: none;
       }
     }
 
-    #header__desktop-logo {
-      display: none;
+    .header__mobile-menu {
+      #mobile-menu__logo {
+        cursor: pointer;
+        height: 100%;
+      }
+
+      .mobile-menu__list {
+        width: 100%;
+        background-color: gray;
+        position: absolute;
+        top: 3rem;
+        right: 0;
+
+        .mobile-list-item {
+          background-color: #f1f1f1;
+          border-top: 1px solid #fff;
+          border-bottom: 1px solid #ddd;
+          text-align: center;
+          font-size: 1.2rem;
+          color: #ff8f32;
+          padding: 3.8% 2%;
+          cursor: pointer;
+        }
+      }
     }
   }
 }
@@ -139,17 +158,18 @@
       #header__login-link {
         text-decoration: none;
       }
+
       #header__mobile-title,
-      #header__mobile-menu-img {
+      .header__mobile-menu {
         display: none;
       }
 
-      #header__desktop-logo {
+      .header__desktop-menu #header__desktop-logo {
         display: inline-block;
       }
 
       .header__change-calender-font-buttons,
-      .header__menu .menu__list {
+      .header__desktop-menu {
         display: flex;
       }
     }

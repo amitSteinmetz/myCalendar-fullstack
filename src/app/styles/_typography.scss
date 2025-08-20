@@ -1,0 +1,59 @@
+// -------------------------
+// Font Weights
+// -------------------------
+$fw-light: 300;
+$fw-regular: 400;
+$fw-medium: 500;
+$fw-bold: 700;
+
+// -------------------------
+// Font Sizes
+// -------------------------
+$fs-xs: 0.75rem; // 12px
+$fs-sm: 0.875rem; // 14px
+$fs-md: 1rem; // 16px
+$fs-lg: 1.125rem; // 18px
+$fs-xl: 1.25rem; // 20px
+$fs-xxl: 1.5rem; // 24px
+$fs-xxxl: 2rem; // 32px
+
+// -------------------------
+// Utility Classes - Font Weight
+// -------------------------
+.fw-light {
+  font-weight: $fw-light !important;
+}
+.fw-regular {
+  font-weight: $fw-regular !important;
+}
+.fw-medium {
+  font-weight: $fw-medium !important;
+}
+.fw-bold {
+  font-weight: $fw-bold !important;
+}
+
+// -------------------------
+// Utility Classes - Font Size
+// -------------------------
+.fs-xs {
+  font-size: $fs-xs !important;
+}
+.fs-sm {
+  font-size: $fs-sm !important;
+}
+.fs-md {
+  font-size: $fs-md !important;
+}
+.fs-lg {
+  font-size: $fs-lg !important;
+}
+.fs-xl {
+  font-size: $fs-xl !important;
+}
+.fs-xxl {
+  font-size: $fs-xxl !important;
+}
+.fs-xxxl {
+  font-size: $fs-xxxl !important;
+}

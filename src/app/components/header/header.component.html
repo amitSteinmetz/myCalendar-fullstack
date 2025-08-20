@@ -17,17 +17,11 @@
 
     <div id="header__mobile-title" class="fw-bold">לוח שנה עברי לועזי</div>
 
-    <div class="header__menu">
-      <img
-        id="header__mobile-menu-img"
-        src="assets/images/header/menu.png"
-        alt="תפריט"
-      />
-
+    <div class="header__desktop-menu">
       <div class="menu__list">
         <div
           *ngFor="let mainLink of mainLinks; let i = index"
-          [ngClass]="{'active-link': i === 0}"
+          [ngClass]="{ 'active-link': i === 0 }"
           class="list-item fs-sm"
         >
           {{ mainLink }}
@@ -55,6 +49,28 @@
         src="assets/images/header/2net-logo-white.png"
         alt="logo"
       />
+    </div>
+
+    <div class="header__mobile-menu">
+      <img
+        (click)="onShowMobileMenuListButtonClicked()"
+        id="mobile-menu__logo"
+        src="assets/images/header/menu.png"
+        alt="תפריט"
+      />
+
+      <div
+        class="mobile-menu__list"
+        [ngStyle]="{ display: showMobileMenuList ? 'block' : 'none' }"
+      >
+        <div *ngFor="let link of mainLinks">
+          <div class="mobile-list-item fw-bold">{{ link }}</div>
+        </div>
+
+        <div *ngFor="let link of additionalLinks">
+          <div class="mobile-list-item fw-bold">{{ link }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

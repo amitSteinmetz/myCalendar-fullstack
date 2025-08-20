@@ -24,7 +24,9 @@ export class HeaderComponent {
     'יצירת קשר',
   ];
 
-  // isFirstLink(index: number) {
-  //   return index ==0
-  // }
+  showMobileMenuList: boolean = false;
+
+  onShowMobileMenuListButtonClicked() {
+    this.showMobileMenuList = !this.showMobileMenuList;
+  }
 }
