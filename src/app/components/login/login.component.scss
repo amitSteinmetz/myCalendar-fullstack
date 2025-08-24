@@ -1,0 +1,99 @@
+@import "../../../styles.scss";
+
+.login-container {
+  width: 98%;
+  margin: 5rem auto 0;
+  text-align: center;
+  color: #333333;
+
+  .external-src-entrance {
+    width: 80%;
+    position: relative;
+    background-color: #4385f5;
+    border-radius: 0.3rem;
+    color: white;
+    height: 3rem;
+    font-size: 1.5rem;
+    margin: 1rem auto;
+    @include flex-center;
+    cursor: pointer;
+
+    .external-src-entrance__title {
+    }
+
+    img {
+      position: absolute;
+      right: 2px;
+      display: inline-block;
+      padding: 0.6rem;
+      background-color: white;
+      border-radius: 0.3rem;
+    }
+  }
+
+  .email-entrance {
+    .email-entrance__title {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+
+      &::before {
+        content: "- או -";
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .email-entrance__form {
+        .form-input {
+            margin: 1rem 0;
+
+            label {
+                display: block;
+                text-align: right;
+                margin-bottom: 0.2rem;
+            }
+
+            input {
+                display: block;
+                width: 100%;
+                height: 3rem;
+            }
+        }
+
+        button {
+            display: block;
+            height: 3rem;
+            width: 60%;
+            margin: 2rem auto 1rem ;
+            text-align: center;
+            color: white;
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            background-color: orange;
+            border: none;
+            cursor: pointer;
+        }
+    }
+
+    .email-entrance__links {
+        a {
+            display: block;
+            text-decoration: none;
+            color: black;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+
+            &:hover {
+                text-decoration: underline;
+                color: blue;
+            }
+        }
+    }
+  }
+}
+
+@media (min-width: 980px) {
+    
+}

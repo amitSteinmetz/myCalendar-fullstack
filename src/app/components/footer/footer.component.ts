@@ -16,4 +16,8 @@ export class FooterComponent {
     'הצהרת נגישות',
     'אחד ועוד אחד',
   ];
+
+  isLastLink(index: number) {
+    return index === this.links.length - 1;
+  }
 }

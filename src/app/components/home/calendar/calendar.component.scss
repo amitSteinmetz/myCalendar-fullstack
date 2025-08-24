@@ -1,0 +1,32 @@
+.calendar-container {
+  margin-top: 3rem;
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+
+    th,
+    td {
+      border: 1px solid #66aadc;
+      padding: 2px;
+    }
+
+    tbody {
+      tr {
+        line-height: 81px;
+      }
+
+      td {
+
+      }
+    }
+
+    thead {
+      background-color: #0072c6;
+      color: white;
+      font-weight: bold;
+      height: 28px;
+    }
+  }
+}

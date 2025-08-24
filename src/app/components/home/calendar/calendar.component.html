@@ -1,0 +1,18 @@
+<div class="calendar-container">
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let day of DAYS">{{ day }}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let week of daysToDisplay">
+        <td *ngFor="let day of week">
+          {{ day.date }}
+          <!-- <input type="text"> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,4 +1,73 @@
+@import "../../../styles.scss";
+
 .footer-container {
-    margin: 0 auto;
-    background-color: #bbb;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 970px;
+  background-color: #bbb;
+  color: #fffffd;
+  margin: 2rem auto 1rem;
+
+  .footer__items-list {
+    @include flex-center;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    column-gap: 9px;
+    border-bottom: 1px solid #999;
+
+    .item {
+      padding: 0.4rem 0.1rem;
+
+      .item-content {
+        cursor: pointer;
+
+        &:hover {
+          color: black;
+          text-decoration: underline;
+        }
+      }
+
+      .item-seperator {
+        position: relative;
+        right: 6px;
+        bottom: 0.05rem;
+      }
+
+      .last-link::before {
+        content: "פיתוח: ";
+        font-size: 12px;
+      }
+    }
+  }
+
+  .copyRight {
+    padding: 0.4rem 0.1rem;
+    color: #fffffc;
+    border-top: 1px solid #fff;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 980px) {
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    padding: 0 0.5rem;
+
+    .footer__items-list {
+      border-bottom: none;
+
+      .item {
+        font-size: 12px;
+      }
+    }
+
+    .copyRight {
+      border-top: none;
+      font-size: 0.75rem;
+    }
+  }
 }

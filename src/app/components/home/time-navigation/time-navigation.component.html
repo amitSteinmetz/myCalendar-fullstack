@@ -22,7 +22,7 @@
   </div>
 
   <div class="time-navigation-buttons">
-    <button class="time-navigation__btn">
+    <button class="time-navigation__btn btn-hover-effect">
       <div>
         <div class="btn-title">לחודש הנוכחי</div>
         <div class="btn-value">אוגוסט</div>
@@ -72,19 +72,21 @@
       <div class="btn-value">2026</div>
     </button>
 
-    <button class="time-navigation__btn">
+    <button class="time-navigation__btn btn-hover-effect">
       <div class="btn-title">קפיצה בזמן</div>
     </button>
   </div>
 
   <div class="language-mode-buttons">
     <button
-      [ngClass]="{ 'curr-language-btn': !isEnglishMode, 'panel-btn': true }"
+      class="panel-btn"
+      [ngClass]="{ 'curr-language-btn': !isEnglishMode }"
     >
       מצב עברי
     </button>
     <button
-      [ngClass]="{ 'curr-language-btn': isEnglishMode, 'panel-btn': true }"
+      class="panel-btn"
+      [ngClass]="{ 'curr-language-btn': isEnglishMode }"
     >
       מצב לועזי
     </button>

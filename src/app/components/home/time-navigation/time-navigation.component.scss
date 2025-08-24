@@ -1,4 +1,4 @@
-@import "../../../styles.scss";
+@import "../../../../styles.scss";
 
 .current-time-details__date {
   color: $primary-blue;
@@ -55,6 +55,10 @@
     cursor: pointer;
     padding: 4px;
     margin: 0 2px;
+
+    &:hover {
+      border: 1px solid orange;
+    }
   }
 
   .time-navigation-buttons {
@@ -98,6 +102,10 @@
         margin: 0.15rem 0 0.25rem;
       }
     }
+
+    .btn-hover-effect:hover {
+      border: 1px solid orange;
+    }
   }
 
   .language-mode-buttons {
@@ -106,6 +114,10 @@
       background-color: #fafafc;
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    button:hover {
+      text-decoration: underline;
     }
   }
 

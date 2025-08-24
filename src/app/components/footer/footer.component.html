@@ -1,5 +1,10 @@
 <div class="footer-container">
-  <div *ngFor="let link of links">{{ link }}</div>
+  <div class="footer__items-list">
+    <div class="item" *ngFor="let link of links; let i = index">
+      <span *ngIf="!isLastLink(i)" class="item-seperator fs-sm">|</span>
+      <span class="item-content" [ngClass]="{ 'last-link': isLastLink(i) }">{{ link }}</span>
+    </div>
+  </div>
 
-  <div>כל הזכויות שמורות לטו נט ישראל</div>
+  <div class="copyRight">כל הזכויות שמורות לטו נט ישראל ©</div>
 </div>
