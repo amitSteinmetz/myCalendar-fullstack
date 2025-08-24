@@ -1,83 +1,92 @@
-<div class="current-time-details">
-  <div class="current-time-details__date fs-xxl">אוגוסט 2025</div>
-  <div class="current-time-details__date">אב - אלול ה'תשפ"ה</div>
+<div class="current-time-details__mobile">
+  <div class="current-time-details__date fs-xxl fw-bold">אוגוסט 2025</div>
+  <div class="current-time-details__date fs-md">אב - אלול ה'תשפ"ה</div>
   <div class="current-time-details__mobile-subtitle">
     הזמנים עבור: תל אביב
     <span class="mobile-subtitle__config-link">הגדרות</span>
   </div>
 </div>
 
-<div class="language-mode-buttons">
-  <button class="language-mode__btn">מצב עברי</button>
-  <button class="language-mode__btn">מצב לועזי</button>
-</div>
+<div class="current-time-details__main">
+  <div class="general-buttons">
+    <button class="panel-btn fs-xs">
+      <img src="assets/images/time-navigation/printer.png" alt="מדפסת" />
+      הדפסה
+    </button>
 
-<div class="time-navigation-buttons">
-  <button class="time-navigation__btn">
-    <div>
-      <div class="btn-title">לחודש הנוכחי</div>
-      <div class="btn-value">אוגוסט</div>
-    </div>
-  </button>
-
-  <button class="time-navigation__btn">
-    <img
-      class="navigation-arrows"
-      src="assets/images/time-navigation/arrow-year-right.png"
-      alt=""
-    />
-    <div class="btn-value">2024</div>
-  </button>
-
-  <button class="time-navigation__btn">
-    <img
-      class="navigation-arrows"
-      src="assets/images/time-navigation/arrow-month-right.png"
-      alt=""
-    />
-    <div class="btn-value">יולי</div>
-  </button>
-
-  <div class="time-navigation-content">
-    <div class="current-time-details__primary-date">
-      placeholder (primary year and month)
-    </div>
-    <div class="current-time-details__secondary-date">
-      placeholder (secondary year and month)
-    </div>
+    <button class="panel-btn fs-xs" id="status-btn">
+      :הזמנים עבור
+      <div class="fw-bold fs-md">תל אביב</div>
+      <div>הגדרות</div>
+    </button>
   </div>
 
-  <button class="time-navigation__btn">
-    <img
-      class="navigation-arrows"
-      src="assets/images/time-navigation/arrow-month-left.png"
-      alt=""
-    />
-    <div class="btn-value">ספטמבר</div>
-  </button>
+  <div class="time-navigation-buttons">
+    <button class="time-navigation__btn">
+      <div>
+        <div class="btn-title">לחודש הנוכחי</div>
+        <div class="btn-value">אוגוסט</div>
+      </div>
+    </button>
 
-  <button class="time-navigation__btn">
-    <img
-      class="navigation-arrows"
-      src="assets/images/time-navigation/arrow-year-left.png"
-      alt=""
-    />
-    <div class="btn-value">2026</div>
-  </button>
+    <button class="time-navigation__btn">
+      <img
+        class="navigation-arrows"
+        src="assets/images/time-navigation/arrow-year-right.png"
+        alt=""
+      />
+      <div class="btn-value">2024</div>
+    </button>
 
-  <button class="time-navigation__btn">
-    <div class="btn-title">קפיצה בזמן</div>
-  </button>
-</div>
+    <button class="time-navigation__btn">
+      <img
+        class="navigation-arrows"
+        src="assets/images/time-navigation/arrow-month-right.png"
+        alt=""
+      />
+      <div class="btn-value">יולי</div>
+    </button>
 
-<div class="general-buttons">
-  <button>
-    הזמנים עבור: תל אביב
-    <div>הגדרות</div>
-  </button>
+    <div class="time-navigation-content">
+      <div class="current-time-details__date fw-bold">אוגוסט 2025</div>
+      <div class="current-time-details__date fs-sm fw-bold">
+        אב - אלול ה'תשפ"ה
+      </div>
+    </div>
 
-  <button>
-    <img src="printer-img" alt="מדפסת" />
-    הדפסה
-  </button>
+    <button class="time-navigation__btn">
+      <img
+        class="navigation-arrows"
+        src="assets/images/time-navigation/arrow-month-left.png"
+        alt=""
+      />
+      <div class="btn-value">ספטמבר</div>
+    </button>
+
+    <button class="time-navigation__btn">
+      <img
+        class="navigation-arrows"
+        src="assets/images/time-navigation/arrow-year-left.png"
+        alt=""
+      />
+      <div class="btn-value">2026</div>
+    </button>
+
+    <button class="time-navigation__btn">
+      <div class="btn-title">קפיצה בזמן</div>
+    </button>
+  </div>
+
+  <div class="language-mode-buttons">
+    <button
+      [ngClass]="{ 'curr-language-btn': !isEnglishMode, 'panel-btn': true }"
+    >
+      מצב עברי
+    </button>
+    <button
+      [ngClass]="{ 'curr-language-btn': isEnglishMode, 'panel-btn': true }"
+    >
+      מצב לועזי
+    </button>
+  </div>
 </div>

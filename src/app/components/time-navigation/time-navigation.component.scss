@@ -1,14 +1,16 @@
 @import "../../../styles.scss";
 
-.current-time-details {
-  padding-top: 5px;
+.current-time-details__date {
+  color: $primary-blue;
+  font-size: 25px;
+  text-align: center;
+}
+
+.current-time-details__mobile {
+  padding: 10px 0 5px;
   @include flex-center;
   flex-direction: column;
 
-  .current-time-details__date {
-    color: $primary-blue;
-    margin: 0.1rem 0;
-  }
   .current-time-details__mobile-subtitle {
     margin-top: 0.1rem;
     .mobile-subtitle__config-link {
@@ -18,55 +20,126 @@
   }
 }
 
-.time-navigation-buttons {
-  @include flex-center;
-  flex-direction: row-reverse;
+.current-time-details__main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f1f1f1;
-  padding: 1.5% 0;
-  margin-top: 5px;
+  padding: 0.5rem;
 
-  .time-navigation__btn {
-    @include flex-center;
-    flex-direction: column;
-    width: 15%;
-    height: 2.9rem;
-    text-align: center;
-    background-color: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 2px;
-    cursor: pointer;
-    margin: 0 2px;
-
-    .btn-title {
-      margin-top: 1%;
-      line-height: 0.9rem;
-      font-size: 14.4px;
-      color: #555;
-      font-weight: bold;
-      max-width: 65px;
+  .general-buttons {
+    button {
+      color: #ffa500;
+      line-height: 1.1;
     }
 
-    .btn-value {
-      color: #999;
-      font-size: 0.7rem;
-    }
-
-    .navigation-arrows {
-      margin: 0.15rem 0 0.25rem;
+    img {
+      height: 22px;
+      margin-top: 3px;
     }
   }
-}
 
-.language-mode-buttons,
-.general-buttons,
-.time-navigation-content {
-  display: none;
-}
+  #status-btn {
+    width: fit-content;
+  }
 
-@media (min-width: 980px) {
+  .panel-btn {
+    display: inline-block;
+    border: 1px solid #ddd;
+    width: 50px;
+    height: 50px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0 2px;
+  }
+
+  .time-navigation-buttons {
+    flex: 1;
+    @include flex-center;
+    flex-direction: row-reverse;
+    padding: 1.5% 0;
+
+    .time-navigation-content {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 0.5rem;
+    }
+
+    .time-navigation__btn {
+      @include flex-center;
+      flex-direction: column;
+      width: 15%;
+      height: 2.9rem;
+      background-color: #fff;
+      border: 1px solid #e1e1e1;
+      border-radius: 2px;
+      cursor: pointer;
+      margin: 0 3px;
+
+      .btn-title {
+        margin-top: 1%;
+        font-size: 14.4px;
+        color: #555;
+        font-weight: bold;
+        padding: 0 3px;
+      }
+
+      .btn-value {
+        color: #999;
+        font-size: 0.7rem;
+      }
+
+      .navigation-arrows {
+        margin: 0.15rem 0 0.25rem;
+      }
+    }
+  }
+
+  .language-mode-buttons {
+    .curr-language-btn {
+      text-decoration: underline;
+      background-color: #fafafc;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+
   .language-mode-buttons,
   .general-buttons,
   .time-navigation-content {
-    display: block;
+    display: none;
+  }
+}
+
+@media (min-width: 980px) {
+  .current-time-details__mobile {
+    display: none;
+  }
+
+  .current-time-details__main {
+    .language-mode-buttons {
+      display: block;
+    }
+
+    .general-buttons,
+    .time-navigation-buttons .time-navigation-content {
+      display: flex;
+    }
+  }
+
+  .current-time-details__main {
+    .time-navigation-buttons {
+      .time-navigation__btn {
+        margin: 0 2px;
+        width: fit-content;
+        height: 50px;
+        min-width: 50px;
+      }
+    }
   }
 }
