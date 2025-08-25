@@ -21,7 +21,8 @@
       <div class="menu__list">
         <div
           *ngFor="let mainLink of mainLinks; let i = index"
-          [ngClass]="{ 'active-link': i === 0 }"
+          [ngClass]="{ 'active-link': router.url === '/' && i === 0}"
+          (click)="onLinkClicked(i)"
           class="list-item fs-sm"
         >
           {{ mainLink }}

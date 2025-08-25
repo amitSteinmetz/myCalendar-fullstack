@@ -73,7 +73,7 @@
     </button>
 
     <button class="time-navigation__btn btn-hover-effect">
-      <div class="btn-title">קפיצה בזמן</div>
+      <div class="btn-title" (click)="toggleShowCustomNaigationModal()">קפיצה בזמן</div>
     </button>
   </div>
 
@@ -92,3 +92,5 @@
     </button>
   </div>
 </div>
+
+<app-custom-navigation-modal *ngIf="showCustomNaigationModal"></app-custom-navigation-modal>

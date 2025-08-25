@@ -36,7 +36,6 @@
 
       .terms {
         color: blue;
-        font-size: 1.2rem;
       }
     }
 
@@ -76,6 +75,10 @@
       .form-checkbox {
         input {
           margin-right: 20%;
+        }
+
+        .terms {
+          font-size: 1.2rem;
         }
       }
     }

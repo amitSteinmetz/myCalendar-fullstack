@@ -1,0 +1,38 @@
+@import "../../../../../styles.scss";
+
+.modal-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  @include flex-center;
+  background-color: rgba(0, 0, 0, 0.3);
+
+  .modal {
+    position: relative;
+    background-color: white;
+    border: 1px solid black;
+    color: #333333;
+
+    .modal__title {
+      background-color: #efefef;
+      height: 3rem;
+      font-size: 2rem;
+      text-align: center;
+
+      div {
+        border-left: 3px solid #d2d2d1;
+        height: inherit;
+      }
+
+      i {
+        position: absolute;
+        top: 5px;
+        left: 3px;
+        font-size: 1.3rem;
+        color: #646462;
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +27,21 @@ export class HeaderComponent {
 
   showMobileMenuList: boolean = false;
 
+  constructor(private _router: Router) {
+    console.log(this.router.url);
+  }
+
   onShowMobileMenuListButtonClicked() {
     this.showMobileMenuList = !this.showMobileMenuList;
+  }
+
+  onLinkClicked(linkIndex: number) {
+    if (linkIndex === 0) {
+      this.router.navigate(["/"])
+    }
+  }
+
+  get router() {
+    return this._router;
   }
 }
