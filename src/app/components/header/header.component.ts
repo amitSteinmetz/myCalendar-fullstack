@@ -27,9 +27,7 @@ export class HeaderComponent {
 
   showMobileMenuList: boolean = false;
 
-  constructor(private _router: Router) {
-    console.log(this.router.url);
-  }
+  constructor(private _router: Router) {}
 
   onShowMobileMenuListButtonClicked() {
     this.showMobileMenuList = !this.showMobileMenuList;
@@ -37,7 +35,7 @@ export class HeaderComponent {
 
   onLinkClicked(linkIndex: number) {
     if (linkIndex === 0) {
-      this.router.navigate(["/"])
+      this.router.navigate(['/']);
     }
   }
 

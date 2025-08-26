@@ -1,13 +1,13 @@
 <div class="modal-wrapper">
   <div class="modal">
     <div class="modal__title">
+      <i class="fa-solid fa-xmark" (click)="onCloseModalButtonClicked()"></i>
       <div>בחירת חודש</div>
-      <i class="fa-solid fa-xmark"></i>
     </div>
 
     <form class="modal__form">
-      <h2>עבור לחודש לועזי</h2>
-      <input type="number" />
+      <h2 class="form__title">עבור לחודש לועזי</h2>
+      <input type="text" />
       <select>
         <option value="">נובמבר</option>
       </select>
@@ -15,8 +15,8 @@
     </form>
 
     <form class="modal__form">
-      <h2>עבור לחודש עברי</h2>
-      <input type="number" />
+      <h2 class="form__title">עבור לחודש עברי</h2>
+      <input type="text" />
       <select>
         <option value="">אלול</option>
       </select>
@@ -24,11 +24,13 @@
     </form>
 
     <form class="modal__form">
-      <h2>קפוץ לחג הבא</h2>
+      <h2 class="form__title">קפוץ לחג הבא</h2>
+      
       <select>
         <option value="">ראש השנה</option>
       </select>
-      <button type="submit">הצג</button>
+
+      <button type="submit" class="holidays-btn">הצג</button>
     </form>
   </div>
 </div>

@@ -10,3 +10,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+@mixin reset-button {
+  display: block;
+  border: none;
+  cursor: pointer;
+}
