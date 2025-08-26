@@ -9,7 +9,7 @@
       <h2 class="form__title">עבור לחודש לועזי</h2>
       <input type="text" />
       <select>
-        <option value="">נובמבר</option>
+        <option value="" *ngFor="let month of monthsGregorian">{{month}}</option>
       </select>
       <button type="submit">הצג</button>
     </form>
@@ -18,7 +18,7 @@
       <h2 class="form__title">עבור לחודש עברי</h2>
       <input type="text" />
       <select>
-        <option value="">אלול</option>
+        <option value="" *ngFor="let month of monthsHebrew">{{month}}</option>
       </select>
       <button type="submit">הצג</button>
     </form>
@@ -27,7 +27,7 @@
       <h2 class="form__title">קפוץ לחג הבא</h2>
       
       <select>
-        <option value="">ראש השנה</option>
+        <option value="" *ngFor="let month of holidays">{{month}}</option>
       </select>
 
       <button type="submit" class="holidays-btn">הצג</button>
