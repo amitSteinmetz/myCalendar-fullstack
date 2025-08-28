@@ -1,10 +1,15 @@
-import { Shabbat } from "./shabbat.model";
+import { Shabbat } from './shabbat.model';
 
 export interface CalendarDay {
   dayInWeek: number;
-  heDate: string;
-  geoDate: string;
+  heDate: DayParts;
+  geoDate: DayParts;
   shabbatEvents?: Shabbat;
   specialEvents?: string[];
 }
 
+export interface DayParts {
+  d: string;
+  m: string;
+  y: string;
+}

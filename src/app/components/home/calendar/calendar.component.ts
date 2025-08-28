@@ -2,12 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CalendarDay } from '../../../models/day.model';
 import { DAYS_IN_WEEK } from '../../../constants/dates.constants';
-import { DayPartPipe } from '../../../pipes/dayPart.pipe';
 import { ShabbatFormatPipe } from '../../../pipes/shabbatFormat.pipe';
 
 @Component({
   selector: 'app-calendar',
-  imports: [CommonModule, DayPartPipe, ShabbatFormatPipe],
+  imports: [CommonModule, ShabbatFormatPipe],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -25,6 +24,7 @@ export class CalendarComponent implements OnInit {
     const currentMonth = now.getMonth() + 1;
 
     const apiDates = await this.fetchApiTimesByMonth(currentYear, currentMonth);
+    console.log(apiDates);
     let constructedDaysToDisplay =
       this.constructDaysToDisplayFromApiResponse(apiDates);
     this.daysToDisplay.splice(0, 0, ...constructedDaysToDisplay);
@@ -88,7 +88,10 @@ export class CalendarComponent implements OnInit {
     }
     return null;
   }
-  constructDayToDisplayFromApiDayItem(calendarDay, constructedDaysToDisplay) {
+  constructDayToDisplayFromApiDayItem(
+    calendarDay,
+    constructedDaysToDisplay: CalendarDay[]
+  ) {
     let currDayIndex =
       constructedDaysToDisplay.length === 0
         ? 0
@@ -100,14 +103,14 @@ export class CalendarComponent implements OnInit {
       case 'hebdate':
         const date = this.extractDateParts(calendarDay.date);
         const matchingDayInWeek = this.getMatchingDayInWeek(
-          date.year,
-          date.month - 1,
-          date.day
+          parseInt(date.y),
+          parseInt(date.m) - 1,
+          parseInt(date.d)
         );
 
         constructedDaysToDisplay.push({
-          geoDate: calendarDay.date,
-          heDate: calendarDay.hebrew,
+          geoDate: this.extractDateParts(calendarDay.date),
+          heDate: calendarDay.heDateParts,
           dayInWeek: matchingDayInWeek,
           specialEvents: [],
           shabbatEvents: {},
@@ -140,11 +143,11 @@ export class CalendarComponent implements OnInit {
 
     if (dateSplitted.length !== 3) throw Error;
 
-    const year = parseInt(dateSplitted[0]);
-    const month = parseInt(dateSplitted[1]);
-    const day = parseInt(dateSplitted[2]);
+    const y = dateSplitted[0];
+    const m = dateSplitted[1];
+    const d = dateSplitted[2];
 
-    return { year, month, day };
+    return { y, m, d };
   }
   formatDatePart(datePart: number) {
     return datePart < 10 ? '0' + datePart : datePart;
@@ -160,7 +163,9 @@ export class CalendarComponent implements OnInit {
       (isStartDate && edgeDay.dayInWeek !== 0) ||
       (!isStartDate && edgeDay.dayInWeek !== 6)
     ) {
-      const date = new Date(edgeDay.geoDate);
+      const date = new Date(
+        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-' + edgeDay.geoDate.d
+      );
       const edgeDateIndex =
         date.getDate() -
         (isStartDate ? edgeDay.dayInWeek : edgeDay.dayInWeek - 6);
@@ -176,7 +181,13 @@ export class CalendarComponent implements OnInit {
     return null;
   }
   getComputedGeoDate(dayToDisplay: CalendarDay, isFirstDayInMonth) {
-    const date = new Date(dayToDisplay.geoDate);
+    const date = new Date(
+      dayToDisplay.geoDate.y +
+        '-' +
+        dayToDisplay.geoDate.m +
+        '-' +
+        dayToDisplay.geoDate.d
+    );
     let incNumber = isFirstDayInMonth ? -1 : 1;
     date.setDate(date.getDate() + incNumber);
 

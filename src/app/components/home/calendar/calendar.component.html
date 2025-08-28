@@ -5,16 +5,21 @@
         <th *ngFor="let day of daysInWeek">{{ day }}</th>
       </tr>
     </thead>
-
     <tbody>
       <tr *ngFor="let week of daysToDisplayRows">
         <td *ngFor="let day of week">
-          <div>{{ day.geoDate | dayPart }}</div>
-          <div>{{ day.heDate }}</div>
+          <div>{{ day.geoDate.d }}</div>
+          <div>{{ day.heDate.d + " " + day.heDate.m }}</div>
           <div>{{ day.specialEvents }}</div>
-          <div>{{ day.shabbatEvents.candlesTime | shabbatFormat}}</div>
-          <div>{{ day.shabbatEvents.havdalaTime | shabbatFormat}}</div>
-          <div>{{ day.shabbatEvents.parasha | shabbatFormat}}</div>
+          <div *ngIf="day.shabbatEvents?.candlesTime">
+            {{ day.shabbatEvents.candlesTime | shabbatFormat }}
+          </div>
+          <div *ngIf="day.shabbatEvents?.havdalaTime">
+            {{ day.shabbatEvents.havdalaTime | shabbatFormat }}
+          </div>
+          <div *ngIf="day.shabbatEvents?.parasha">
+            {{ day.shabbatEvents.parasha | shabbatFormat }}
+          </div>
           <!-- <input type="text"> -->
         </td>
       </tr>
