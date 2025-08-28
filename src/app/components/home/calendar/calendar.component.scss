@@ -5,6 +5,7 @@
     border-collapse: collapse;
     width: 100%;
     table-layout: fixed;
+    direction: rtl;
 
     th,
     td {
@@ -15,10 +16,6 @@
     tbody {
       tr {
         line-height: 81px;
-      }
-
-      td {
-
       }
     }
 

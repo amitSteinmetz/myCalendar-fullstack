@@ -2,10 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CalendarDay } from '../../../models/day.model';
 import { DAYS_IN_WEEK } from '../../../constants/dates.constants';
+import { DayPartPipe } from '../../../pipes/dayPart.pipe';
+import { ShabbatFormatPipe } from '../../../pipes/shabbatFormat.pipe';
 
 @Component({
   selector: 'app-calendar',
-  imports: [CommonModule],
+  imports: [CommonModule, DayPartPipe, ShabbatFormatPipe],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
@@ -17,45 +19,46 @@ export class CalendarComponent implements OnInit {
   ngOnInit(): void {
     this.buildInitialMonthToDisplay();
   }
-
   async buildInitialMonthToDisplay() {
     const now = new Date();
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
 
     const apiDates = await this.fetchApiTimesByMonth(currentYear, currentMonth);
-    this.constructDaysToDisplayFromApiResponse(apiDates, true);
-    console.log(
-      'Current month dates without pre and post month dates:\n',
-      this.daysToDisplay
-    );
+    let constructedDaysToDisplay =
+      this.constructDaysToDisplayFromApiResponse(apiDates);
+    this.daysToDisplay.splice(0, 0, ...constructedDaysToDisplay);
 
-    // const firstDate = this.findEdgeDateToDisplay(true);
-    // if (firstDate != null) {
-    //   const apiFirstWeekDates = await this.fetchApiTimesByRange(
-    //     firstDate,
-    //     this.getComputedGeoDate(this.daysToDisplay[0])
-    //   );
-    //   this.constructDaysToDisplayFromApiResponse(apiFirstWeekDates, true);
-    //   console.log("pre-dates only:\n", apiFirstWeekDates)
-    // }
-    // console.log(
-    //   'Current month dates with pre and without post month dates:\n',
-    //   this.daysToDisplay
-    // );
+    const firstDate = this.findEdgeDateToDisplay(true);
+    if (firstDate != null) {
+      const apiFirstWeekDates = await this.fetchApiTimesByRange(
+        firstDate,
+        this.getComputedGeoDate(this.daysToDisplay[0], true)
+      );
+      constructedDaysToDisplay =
+        this.constructDaysToDisplayFromApiResponse(apiFirstWeekDates);
+      this.daysToDisplay.splice(0, 0, ...constructedDaysToDisplay);
+    }
 
-    // const lastDate = this.findEdgeDateToDisplay(false);
-    // if (lastDate != null) {
-    //   const apiLastWeekDates = await this.fetchApiTimesByRange(
-    //     this.getComputedGeoDate(
-    //       this.daysToDisplay[this.daysToDisplay.length - 1]
-    //     ),
-    //     lastDate
-    //   );
-    //   this.constructDaysToDisplayFromApiResponse(apiLastWeekDates, false);
-    // }
+    const lastDate = this.findEdgeDateToDisplay(false);
+    if (lastDate != null) {
+      const apiLastWeekDates = await this.fetchApiTimesByRange(
+        this.getComputedGeoDate(
+          this.daysToDisplay[this.daysToDisplay.length - 1],
+          false
+        ),
+        lastDate
+      );
+      constructedDaysToDisplay =
+        this.constructDaysToDisplayFromApiResponse(apiLastWeekDates);
+      this.daysToDisplay.splice(
+        this.daysToDisplay.length,
+        0,
+        ...constructedDaysToDisplay
+      );
+    }
 
-    // console.log(this.daysToDisplay);
+    console.log(this.daysToDisplay);
   }
 
   //** Fetch from API functions **//
@@ -71,22 +74,27 @@ export class CalendarComponent implements OnInit {
   }
 
   //** Construct days to display from API response **//
-  constructDaysToDisplayFromApiResponse(dates, isPreMonthDates) {
-    if (dates?.items != null) {
-      let preMonthDayCurrIndex = 0;
+  constructDaysToDisplayFromApiResponse(apiDates) {
+    const constructedDaysToDisplay: CalendarDay[] = [];
 
-      dates.items.forEach((item) => {
-        let currDayIndex = isPreMonthDates
-          ? preMonthDayCurrIndex
-          : this.daysToDisplay.length - 1;
-        this.constructDayToDisplayFromApiDayItem(item, currDayIndex);
-
-        preMonthDayCurrIndex++;
+    if (apiDates?.items != null) {
+      apiDates.items.forEach((item) => {
+        this.constructDayToDisplayFromApiDayItem(
+          item,
+          constructedDaysToDisplay
+        );
       });
+      return constructedDaysToDisplay;
     }
+    return null;
   }
-  constructDayToDisplayFromApiDayItem(calendarDay, currDayIndex) {
-    const currDayToDisplay: CalendarDay = this.daysToDisplay[currDayIndex];
+  constructDayToDisplayFromApiDayItem(calendarDay, constructedDaysToDisplay) {
+    let currDayIndex =
+      constructedDaysToDisplay.length === 0
+        ? 0
+        : constructedDaysToDisplay.length - 1;
+    const currDayToDisplay: CalendarDay =
+      constructedDaysToDisplay[currDayIndex];
 
     switch (calendarDay.category) {
       case 'hebdate':
@@ -97,7 +105,7 @@ export class CalendarComponent implements OnInit {
           date.day
         );
 
-        this.daysToDisplay.splice(currDayIndex, 0, {
+        constructedDaysToDisplay.push({
           geoDate: calendarDay.date,
           heDate: calendarDay.hebrew,
           dayInWeek: matchingDayInWeek,
@@ -141,7 +149,6 @@ export class CalendarComponent implements OnInit {
   formatDatePart(datePart: number) {
     return datePart < 10 ? '0' + datePart : datePart;
   }
-
   findEdgeDateToDisplay(isStartDate) {
     if (this.daysToDisplay.length === 0) throw Error('No days to display');
 
@@ -168,22 +175,23 @@ export class CalendarComponent implements OnInit {
 
     return null;
   }
-
-  getComputedGeoDate(dayToDisplay: CalendarDay) {
-    console.log(dayToDisplay);
+  getComputedGeoDate(dayToDisplay: CalendarDay, isFirstDayInMonth) {
     const date = new Date(dayToDisplay.geoDate);
-    console.log(date);
-    date.setDate(date.getDate() - 1);
-    console.log(date);
+    let incNumber = isFirstDayInMonth ? -1 : 1;
+    date.setDate(date.getDate() + incNumber);
 
     const year = date.getFullYear();
     const monthFormatted = this.formatDatePart(date.getMonth() + 1);
     const dayFormatted = this.formatDatePart(date.getDate());
-    console.log(
-      'computed geo date: ',
-      year + '-' + monthFormatted + '-' + dayFormatted
-    );
 
     return year + '-' + monthFormatted + '-' + dayFormatted;
+  }
+
+  get daysToDisplayRows(): CalendarDay[][] {
+    const rows = [];
+    for (let i = 0; i < this.daysToDisplay.length; i += 7) {
+      rows.push(this.daysToDisplay.slice(i, i + 7));
+    }
+    return rows;
   }
 }

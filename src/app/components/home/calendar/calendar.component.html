@@ -7,15 +7,19 @@
     </thead>
 
     <tbody>
-      
-        <td *ngFor="let day of daysToDisplay">
-          {{ day.geoDate }}
+      <tr *ngFor="let week of daysToDisplayRows">
+        <td *ngFor="let day of week">
+          <div>{{ day.geoDate | dayPart }}</div>
+          <div>{{ day.heDate }}</div>
+          <div>{{ day.specialEvents }}</div>
+          <div>{{ day.shabbatEvents.candlesTime | shabbatFormat}}</div>
+          <div>{{ day.shabbatEvents.havdalaTime | shabbatFormat}}</div>
+          <div>{{ day.shabbatEvents.parasha | shabbatFormat}}</div>
           <!-- <input type="text"> -->
         </td>
-     
+      </tr>
     </tbody>
   </table>
 
   <!-- <button (click)="fetchApiTimes">fetch api times</button> -->
 </div>
-
