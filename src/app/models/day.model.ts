@@ -1,3 +1,7 @@
-export interface Day {
-  date;
+export interface CalendarDay {
+  heDate?: string;
+  geoDate: string;
+  specialEvents?: string[];
+  shabbatTime?: string;
 }
+

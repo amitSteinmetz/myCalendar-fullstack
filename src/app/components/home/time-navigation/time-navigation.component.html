@@ -22,10 +22,13 @@
   </div>
 
   <div class="time-navigation-buttons">
-    <button class="time-navigation__btn btn-hover-effect">
+    <button
+      class="time-navigation__btn btn-hover-effect"
+      id="time-navigation__btn__month"
+    >
       <div>
-        <div class="btn-title">לחודש הנוכחי</div>
-        <div class="btn-value">אוגוסט</div>
+        <div class="btn-title" id="btn-title__month">לחודש הנוכחי</div>
+        <div class="btn-value" id="btn-value__month">אוגוסט</div>
       </div>
     </button>
 
@@ -73,7 +76,9 @@
     </button>
 
     <button class="time-navigation__btn btn-hover-effect">
-      <div class="btn-title" (click)="toggleShowCustomNaigationModal()">קפיצה בזמן</div>
+      <div class="btn-title" (click)="toggleShowCustomNaigationModal()">
+        קפיצה בזמן
+      </div>
     </button>
   </div>
 
@@ -93,4 +98,7 @@
   </div>
 </div>
 
-<app-custom-navigation-modal *ngIf="showCustomNaigationModal" (close_modal)="toggleShowCustomNaigationModal()"></app-custom-navigation-modal>
+<app-custom-navigation-modal
+  *ngIf="showCustomNaigationModal"
+  (close_modal)="toggleShowCustomNaigationModal()"
+></app-custom-navigation-modal>

@@ -75,6 +75,7 @@
     }
 
     .time-navigation__btn {
+      position: relative;
       @include flex-center;
       flex-direction: column;
       width: 15%;
@@ -91,6 +92,7 @@
         color: #555;
         font-weight: bold;
         padding: 0 3px;
+        max-width: 65px;
       }
 
       .btn-value {
@@ -98,9 +100,28 @@
         font-size: 0.7rem;
       }
 
+      #btn-title__month,
+      #btn-value__month {
+        position: absolute;
+        left: 0;
+        width: 100%;
+      }
+
+      #btn-title__month {
+        top: 3px;
+      }
+
+      #btn-value__month {
+        bottom: 1px;
+      }
+
       .navigation-arrows {
         margin: 0.15rem 0 0.25rem;
       }
+    }
+
+    #time-navigation__btn__month {
+      width: 62px;
     }
 
     .btn-hover-effect:hover {

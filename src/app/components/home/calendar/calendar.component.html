@@ -2,17 +2,20 @@
   <table>
     <thead>
       <tr>
-        <th *ngFor="let day of DAYS">{{ day }}</th>
+        <th *ngFor="let day of daysInWeek">{{ day }}</th>
       </tr>
     </thead>
 
     <tbody>
-      <tr *ngFor="let week of daysToDisplay">
+      <!-- <tr *ngFor="let week of daysToDisplay">
         <td *ngFor="let day of week">
           {{ day.date }}
-          <!-- <input type="text"> -->
+          <input type="text">
         </td>
-      </tr>
+      </tr> -->
     </tbody>
   </table>
+
+  <!-- <button (click)="fetchApiTimes">fetch api times</button> -->
 </div>
+

@@ -3,7 +3,7 @@ import {
   MONTHS_HEBREW,
   MONTHS_GREGORIAN,
   HOLIDAYS,
-} from '../../../../constants/dates';
+} from '../../../../constants/dates.constants';
 import { CommonModule } from '@angular/common';
 
 @Component({
