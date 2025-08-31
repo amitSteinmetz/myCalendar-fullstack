@@ -1,4 +1,4 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { CalendarDay, DayParts } from '../models/day.model';
 
 @Injectable({
@@ -8,7 +8,8 @@ export class CalendarService {
   daysToDisplaySignal: WritableSignal<CalendarDay[]> = signal([]);
   isHebrewMode: boolean = false;
   chosenDateGeo: WritableSignal<DayParts> = signal(null);
-  // chosenDateHeb: DayParts = null;
+  chosenDateHeb: WritableSignal<DayParts> = signal(null);
+  // hebLinkedTimeOfDisplayedPeriod = computed(() => this.chosenDateGeo())
 
   constructor() {
     const now = new Date();
@@ -21,21 +22,20 @@ export class CalendarService {
       d: now.getDate.toString(),
     });
 
-    // this.initCurrentHebDate(currentYear, currentMonth);
+    this.setChosenDateHeb();
   }
 
-  // async initCurrentHebDate(currentYear: string, currentMonth: string) {
-  //   const currentDateHeb = await fetch(
-  //     `https://www.hebcal.com/converter?cfg=json&gy=${currentYear}&gm=${currentMonth}&gd=01&g2h=1&strict=1`
-  //   ).then((res) => res.json());
-  //   console.log(currentDateHeb);
+  async setChosenDateHeb() {
+    const currentDateHeb = await fetch(
+      `https://www.hebcal.com/converter?cfg=json&gy=${this.chosenDateGeo().y}&gm=${this.chosenDateGeo().m}&gd=01&g2h=1&strict=1`
+    ).then((res) => res.json());
 
-  //   this.chosenDateHeb = {
-  //     y: currentDateHeb.heDateParts.y,
-  //     m: currentDateHeb.heDateParts.m,
-  //     d: currentDateHeb.heDateParts.d,
-  //   };
-  // }
+    this.chosenDateHeb.set({
+      y: currentDateHeb.heDateParts.y,
+      m: currentDateHeb.heDateParts.m,
+      d: currentDateHeb.heDateParts.d,
+    });
+  }
 
   async buildMonthToDisplay(year?, month?) {
     this.daysToDisplaySignal.set([]);
@@ -248,9 +248,10 @@ export class CalendarService {
       m: month,
       d: prev.d
     }));
+    this.setChosenDateHeb();    
   }
 
-  // async getHebLinkedTimeOfDisplayedPeriod() {
+  // get hebLinkedTimeOfDisplayedPeriod() {
   //   let result: any = {};
 
   //   const nextTimePeriod = await fetch(

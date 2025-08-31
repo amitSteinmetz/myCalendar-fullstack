@@ -1,13 +1,25 @@
 <div class="current-time-details__mobile">
   <div class="current-time-details__date fs-xxl fw-bold">
     {{
-      calendarService.chosenDateGeo().y +
-        " " +
-        calendarService.chosenDateGeo().m
+      calendarService.isHebrewMode
+        ? calendarService.chosenDateHeb().m +
+          " ה'" +
+          calendarService.chosenDateHeb().y
+        : calendarService.chosenDateGeo().y +
+          " " +
+          geoMonthsNames[getTimeAsInt(calendarService.chosenDateGeo().m) - 1]
     }}
   </div>
   <div class="current-time-details__date fs-md">
-    {{ true }}
+    {{
+      !calendarService.isHebrewMode
+        ? calendarService.chosenDateHeb()?.m +
+          " ה'" +
+          calendarService.chosenDateHeb().y
+        : calendarService.chosenDateGeo().y +
+          " " +
+          geoMonthsNames[getTimeAsInt(calendarService.chosenDateGeo().m) - 1]
+    }}
   </div>
   <div class="current-time-details__mobile-subtitle">
     הזמנים עבור: תל אביב
@@ -37,7 +49,13 @@
       <div>
         <div class="btn-title" id="btn-title__month">לחודש הנוכחי</div>
         <div class="btn-value" id="btn-value__month">
-          {{ calendarService.chosenDateGeo().m }}
+          {{
+            calendarService.isHebrewMode
+              ? calendarService.chosenDateHeb().m
+              : geoMonthsNames[
+                  getTimeAsInt(calendarService.chosenDateGeo().m) - 1
+                ]
+          }}
         </div>
       </div>
     </button>
@@ -48,13 +66,16 @@
         src="assets/images/time-navigation/arrow-year-right.png"
         alt=""
       />
-      <div class="btn-value"  (click)="
+      <div
+        class="btn-value"
+        (click)="
           onChangeTimePeriodToDisplayButtonClicked(
             calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear,
             calendarService.chosenDateGeo().m
           )
-        ">
-        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear }}
+        "
+      >
+        {{ calendarService.isHebrewMode ? "" : calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear }}
       </div>
     </button>
 
@@ -64,12 +85,15 @@
         src="assets/images/time-navigation/arrow-month-right.png"
         alt=""
       />
-      <div class="btn-value" (click)="
+      <div
+        class="btn-value"
+        (click)="
           onChangeTimePeriodToDisplayButtonClicked(
             calendarService.chosenDateGeo().y,
             calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth
           )
-        ">
+        "
+      >
         {{ calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth }}
       </div>
     </button>
