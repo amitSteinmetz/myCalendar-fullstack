@@ -5,26 +5,57 @@
         <th *ngFor="let day of daysInWeek">{{ day }}</th>
       </tr>
     </thead>
+
     <tbody>
       <tr *ngFor="let week of daysToDisplayRows">
-        <td *ngFor="let day of week">
-          <div>{{ day.geoDate.d }}</div>
-          <div>{{ day.heDate.d + " " + day.heDate.m }}</div>
-          <div>{{ day.specialEvents }}</div>
-          <div *ngIf="day.shabbatEvents?.candlesTime">
+        <td *ngFor="let day of week" class="day-container">
+          <div class="day-container__main-date fw-bold">
+            {{
+              calendarService.isHebrewMode
+                ? day.heDate.d
+                : (day.geoDate.d | removeLeadingZeroes)
+            }}
+          </div>
+
+          <div class="day-container__sub-date fs-xs">
+            {{
+              !calendarService.isHebrewMode
+                ? day.heDate.d + " " + day.heDate.m
+                : (day.geoDate.d | removeLeadingZeroes)
+            }}
+          </div>
+
+          <div
+            *ngIf="day.shabbatEvents?.candlesTime"
+            class="day-container__shabbat-events__candles-time fs-xs"
+          >
             {{ day.shabbatEvents.candlesTime | shabbatFormat }}
           </div>
-          <div *ngIf="day.shabbatEvents?.havdalaTime">
+          <div
+            *ngIf="day.shabbatEvents?.havdalaTime"
+            class="day-container__shabbat-events__havdala-time fs-xs"
+          >
             {{ day.shabbatEvents.havdalaTime | shabbatFormat }}
           </div>
-          <div *ngIf="day.shabbatEvents?.parasha">
+          <div
+            *ngIf="day.shabbatEvents?.parasha"
+            class="day-container__shabbat-events__parasha fs-xs"
+          >
             {{ day.shabbatEvents.parasha | shabbatFormat }}
           </div>
-          <!-- <input type="text"> -->
+
+          <div class="day-container__special-events fs-xs fw-bold">
+            <div
+              *ngFor="let event of day.specialEvents"
+              [appApplyEventColor]="event"
+            >
+              {{ event }}
+            </div>
+          </div>
+
+          <input type="text" class="fs-xs" />
         </td>
       </tr>
     </tbody>
   </table>
-
-  <!-- <button (click)="fetchApiTimes">fetch api times</button> -->
 </div>

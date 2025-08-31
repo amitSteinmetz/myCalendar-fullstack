@@ -1,5 +1,8 @@
+@import "../../../../styles.scss";
+
 .calendar-container {
-  margin-top: 3rem;
+  width: 99.5%;
+  margin: 0 auto;
 
   table {
     border-collapse: collapse;
@@ -13,17 +16,64 @@
       padding: 2px;
     }
 
-    tbody {
-      tr {
-        line-height: 81px;
-      }
-    }
-
     thead {
       background-color: #0072c6;
       color: white;
       font-weight: bold;
       height: 28px;
+    }
+
+    tbody {
+      tr {
+        .day-container {
+          vertical-align: top;
+          padding: 0 2px;
+
+          .day-container__main-date {
+            font-size: $fs-xl;
+
+            @media (min-width: 980px) {
+              font-size: 30px;
+            }
+          }
+
+          .day-container__main-date,
+          .day-container__sub-date,
+          .day-container__shabbat-events__parasha {
+            color: $primary-blue;
+          }
+
+          .day-container__shabbat-events__candles-time,
+          .day-container__shabbat-events__havdala-time,
+          .day-container__shabbat-events__parasha {
+            margin: 1px 0 2px;
+            line-height: 13px;
+          }
+
+          .day-container__shabbat-events__candles-time {
+            color: #cc6600;
+          }
+          .day-container__shabbat-events__havdala-time {
+            color: #cc6644;
+          }
+
+          input {
+            display: block;
+            margin: 2px 0;
+            width: 95%;
+            border: 1px solid #0000ff;
+            color: #0000ff;
+            opacity: 0;
+            pointer-events: auto;
+            transition: opacity 0.2s;
+
+            &:hover,
+            &:focus {
+              opacity: 1;
+            }
+          }
+        }
+      }
     }
   }
 }

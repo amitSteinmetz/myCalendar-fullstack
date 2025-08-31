@@ -1,6 +1,14 @@
 <div class="current-time-details__mobile">
-  <div class="current-time-details__date fs-xxl fw-bold">אוגוסט 2025</div>
-  <div class="current-time-details__date fs-md">אב - אלול ה'תשפ"ה</div>
+  <div class="current-time-details__date fs-xxl fw-bold">
+    {{
+      calendarService.chosenDateGeo().y +
+        " " +
+        calendarService.chosenDateGeo().m
+    }}
+  </div>
+  <div class="current-time-details__date fs-md">
+    {{ true }}
+  </div>
   <div class="current-time-details__mobile-subtitle">
     הזמנים עבור: תל אביב
     <span class="mobile-subtitle__config-link">הגדרות</span>
@@ -28,7 +36,9 @@
     >
       <div>
         <div class="btn-title" id="btn-title__month">לחודש הנוכחי</div>
-        <div class="btn-value" id="btn-value__month">אוגוסט</div>
+        <div class="btn-value" id="btn-value__month">
+          {{ calendarService.chosenDateGeo().m }}
+        </div>
       </div>
     </button>
 
@@ -38,7 +48,14 @@
         src="assets/images/time-navigation/arrow-year-right.png"
         alt=""
       />
-      <div class="btn-value">2024</div>
+      <div class="btn-value"  (click)="
+          onChangeTimePeriodToDisplayButtonClicked(
+            calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear,
+            calendarService.chosenDateGeo().m
+          )
+        ">
+        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear }}
+      </div>
     </button>
 
     <button class="time-navigation__btn">
@@ -47,7 +64,14 @@
         src="assets/images/time-navigation/arrow-month-right.png"
         alt=""
       />
-      <div class="btn-value">יולי</div>
+      <div class="btn-value" (click)="
+          onChangeTimePeriodToDisplayButtonClicked(
+            calendarService.chosenDateGeo().y,
+            calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth
+          )
+        ">
+        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth }}
+      </div>
     </button>
 
     <div class="time-navigation-content">
@@ -63,7 +87,17 @@
         src="assets/images/time-navigation/arrow-month-left.png"
         alt=""
       />
-      <div class="btn-value">ספטמבר</div>
+      <div
+        class="btn-value"
+        (click)="
+          onChangeTimePeriodToDisplayButtonClicked(
+            calendarService.chosenDateGeo().y,
+            calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth
+          )
+        "
+      >
+        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth }}
+      </div>
     </button>
 
     <button class="time-navigation__btn">
@@ -72,7 +106,17 @@
         src="assets/images/time-navigation/arrow-year-left.png"
         alt=""
       />
-      <div class="btn-value">2026</div>
+      <div
+        class="btn-value"
+        (click)="
+          onChangeTimePeriodToDisplayButtonClicked(
+            calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear,
+            calendarService.chosenDateGeo().m
+          )
+        "
+      >
+        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
+      </div>
     </button>
 
     <button class="time-navigation__btn btn-hover-effect">
@@ -85,13 +129,15 @@
   <div class="language-mode-buttons">
     <button
       class="panel-btn"
-      [ngClass]="{ 'curr-language-btn': !isEnglishMode }"
+      [ngClass]="{ 'curr-language-btn': calendarService.isHebrewMode }"
+      (click)="calendarService.toggleHebrewMode(true)"
     >
       מצב עברי
     </button>
     <button
       class="panel-btn"
-      [ngClass]="{ 'curr-language-btn': isEnglishMode }"
+      [ngClass]="{ 'curr-language-btn': !calendarService.isHebrewMode }"
+      (click)="calendarService.toggleHebrewMode(false)"
     >
       מצב לועזי
     </button>

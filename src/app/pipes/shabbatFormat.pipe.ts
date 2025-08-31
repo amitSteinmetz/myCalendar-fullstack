@@ -7,7 +7,7 @@ export class ShabbatFormatPipe implements PipeTransform {
   transform(date: string) {
     if (!date) throw Error('Invalid pipe input');
     let shabbatFormat: string = '';
-    console.log(date);
+    
     if (date.includes('Candle')) {
       shabbatFormat += 'כניסת שבת: ' + date.slice(-5);
     } else if (date.includes('Havdalah')) {

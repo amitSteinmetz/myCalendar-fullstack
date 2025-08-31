@@ -3,199 +3,27 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarDay } from '../../../models/day.model';
 import { DAYS_IN_WEEK } from '../../../constants/dates.constants';
 import { ShabbatFormatPipe } from '../../../pipes/shabbatFormat.pipe';
+import { CalendarService } from '../../../services/calendar.service';
+import { removeLeadingZeroesPipe } from '../../../pipes/removeLeadingZeroes.pipe';
+import { ApplyEventColorDirective } from "../../../directives/applyEventColor.directive";
 
 @Component({
   selector: 'app-calendar',
-  imports: [CommonModule, ShabbatFormatPipe],
+  imports: [CommonModule, ShabbatFormatPipe, removeLeadingZeroesPipe, ApplyEventColorDirective],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
 export class CalendarComponent implements OnInit {
   readonly daysInWeek = DAYS_IN_WEEK;
-  daysToDisplay: CalendarDay[] = [];
 
-  //** Init functions **/
+  constructor(public calendarService: CalendarService) {}
+
   ngOnInit(): void {
-    this.buildInitialMonthToDisplay();
-  }
-  async buildInitialMonthToDisplay() {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-
-    const apiDates = await this.fetchApiTimesByMonth(currentYear, currentMonth);
-    console.log(apiDates);
-    let constructedDaysToDisplay =
-      this.constructDaysToDisplayFromApiResponse(apiDates);
-    this.daysToDisplay.splice(0, 0, ...constructedDaysToDisplay);
-
-    const firstDate = this.findEdgeDateToDisplay(true);
-    if (firstDate != null) {
-      const apiFirstWeekDates = await this.fetchApiTimesByRange(
-        firstDate,
-        this.getComputedGeoDate(this.daysToDisplay[0], true)
-      );
-      constructedDaysToDisplay =
-        this.constructDaysToDisplayFromApiResponse(apiFirstWeekDates);
-      this.daysToDisplay.splice(0, 0, ...constructedDaysToDisplay);
-    }
-
-    const lastDate = this.findEdgeDateToDisplay(false);
-    if (lastDate != null) {
-      const apiLastWeekDates = await this.fetchApiTimesByRange(
-        this.getComputedGeoDate(
-          this.daysToDisplay[this.daysToDisplay.length - 1],
-          false
-        ),
-        lastDate
-      );
-      constructedDaysToDisplay =
-        this.constructDaysToDisplayFromApiResponse(apiLastWeekDates);
-      this.daysToDisplay.splice(
-        this.daysToDisplay.length,
-        0,
-        ...constructedDaysToDisplay
-      );
-    }
-
-    console.log(this.daysToDisplay);
+    this.calendarService.buildMonthToDisplay();
   }
 
-  //** Fetch from API functions **//
-  async fetchApiTimesByMonth(year, month) {
-    return await fetch(
-      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${year}&month=${month}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
-    ).then((res) => res.json());
-  }
-  async fetchApiTimesByRange(startDate: string, endDate: string) {
-    return await fetch(
-      `https://www.hebcal.com/hebcal?v=1&cfg=json&start=${startDate}&end=${endDate}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
-    ).then((res) => res.json());
-  }
-
-  //** Construct days to display from API response **//
-  constructDaysToDisplayFromApiResponse(apiDates) {
-    const constructedDaysToDisplay: CalendarDay[] = [];
-
-    if (apiDates?.items != null) {
-      apiDates.items.forEach((item) => {
-        this.constructDayToDisplayFromApiDayItem(
-          item,
-          constructedDaysToDisplay
-        );
-      });
-      return constructedDaysToDisplay;
-    }
-    return null;
-  }
-  constructDayToDisplayFromApiDayItem(
-    calendarDay,
-    constructedDaysToDisplay: CalendarDay[]
-  ) {
-    let currDayIndex =
-      constructedDaysToDisplay.length === 0
-        ? 0
-        : constructedDaysToDisplay.length - 1;
-    const currDayToDisplay: CalendarDay =
-      constructedDaysToDisplay[currDayIndex];
-
-    switch (calendarDay.category) {
-      case 'hebdate':
-        const date = this.extractDateParts(calendarDay.date);
-        const matchingDayInWeek = this.getMatchingDayInWeek(
-          parseInt(date.y),
-          parseInt(date.m) - 1,
-          parseInt(date.d)
-        );
-
-        constructedDaysToDisplay.push({
-          geoDate: this.extractDateParts(calendarDay.date),
-          heDate: calendarDay.heDateParts,
-          dayInWeek: matchingDayInWeek,
-          specialEvents: [],
-          shabbatEvents: {},
-        });
-        break;
-      case 'holiday':
-      case 'roshchodesh':
-        currDayToDisplay.specialEvents.push(calendarDay.hebrew);
-        break;
-      case 'candles':
-        currDayToDisplay.shabbatEvents.candlesTime = calendarDay.title;
-        break;
-      case 'havdalah':
-        currDayToDisplay.shabbatEvents.havdalaTime = calendarDay.title;
-        break;
-      case 'parashat':
-        currDayToDisplay.shabbatEvents.parasha = calendarDay.hebrew;
-        break;
-    }
-  }
-
-  //** Utillities **/
-  getMatchingDayInWeek(year: number, month: number, day: number) {
-    const date = new Date(year, month, day);
-    const dayInWeek = date.getDay();
-    return dayInWeek;
-  }
-  extractDateParts(date: string) {
-    let dateSplitted = date.split('-');
-
-    if (dateSplitted.length !== 3) throw Error;
-
-    const y = dateSplitted[0];
-    const m = dateSplitted[1];
-    const d = dateSplitted[2];
-
-    return { y, m, d };
-  }
-  formatDatePart(datePart: number) {
-    return datePart < 10 ? '0' + datePart : datePart;
-  }
-  findEdgeDateToDisplay(isStartDate) {
-    if (this.daysToDisplay.length === 0) throw Error('No days to display');
-
-    const edgeDay = isStartDate
-      ? this.daysToDisplay[0]
-      : this.daysToDisplay[this.daysToDisplay.length - 1];
-
-    if (
-      (isStartDate && edgeDay.dayInWeek !== 0) ||
-      (!isStartDate && edgeDay.dayInWeek !== 6)
-    ) {
-      const date = new Date(
-        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-' + edgeDay.geoDate.d
-      );
-      const edgeDateIndex =
-        date.getDate() -
-        (isStartDate ? edgeDay.dayInWeek : edgeDay.dayInWeek - 6);
-      date.setDate(edgeDateIndex);
-
-      const year = date.getFullYear();
-      const monthFormatted = this.formatDatePart(date.getMonth() + 1);
-      const dayFormatted = this.formatDatePart(date.getDate());
-
-      return year + '-' + monthFormatted + '-' + dayFormatted;
-    }
-
-    return null;
-  }
-  getComputedGeoDate(dayToDisplay: CalendarDay, isFirstDayInMonth) {
-    const date = new Date(
-      dayToDisplay.geoDate.y +
-        '-' +
-        dayToDisplay.geoDate.m +
-        '-' +
-        dayToDisplay.geoDate.d
-    );
-    let incNumber = isFirstDayInMonth ? -1 : 1;
-    date.setDate(date.getDate() + incNumber);
-
-    const year = date.getFullYear();
-    const monthFormatted = this.formatDatePart(date.getMonth() + 1);
-    const dayFormatted = this.formatDatePart(date.getDate());
-
-    return year + '-' + monthFormatted + '-' + dayFormatted;
+  get daysToDisplay(): CalendarDay[] {
+    return this.calendarService.daysToDisplaySignal();
   }
 
   get daysToDisplayRows(): CalendarDay[][] {
