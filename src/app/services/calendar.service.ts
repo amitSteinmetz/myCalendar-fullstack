@@ -1,4 +1,10 @@
-import { computed, Injectable, signal, WritableSignal } from '@angular/core';
+import {
+  computed,
+  effect,
+  Injectable,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { CalendarDay, DayParts } from '../models/day.model';
 
 @Injectable({
@@ -9,7 +15,7 @@ export class CalendarService {
   isHebrewMode: boolean = false;
   chosenDateGeo: WritableSignal<DayParts> = signal(null);
   chosenDateHeb: WritableSignal<DayParts> = signal(null);
-  // hebLinkedTimeOfDisplayedPeriod = computed(() => this.chosenDateGeo())
+  hebLinkedTimeOfDisplayedPeriod: WritableSignal<any> = signal(null);
 
   constructor() {
     const now = new Date();
@@ -23,11 +29,49 @@ export class CalendarService {
     });
 
     this.setChosenDateHeb();
+
+    effect(() => {
+      console.log("effect is running")
+      this.chosenDateGeo();
+
+      if (this.chosenDateGeo()) {
+        this.fetchHebLinkedTimeOfDisplayedPeriod();
+      }
+    });
+  }
+
+  async fetchHebLinkedTimeOfDisplayedPeriod() {
+    console.log("effect callback is running")
+    let result: any = {};
+
+    console.log("this.geoLinkedTimeOfDisplayedPeriod.nextYear:", this.geoLinkedTimeOfDisplayedPeriod.nextYear)
+    console.log("this.geoLinkedTimeOfDisplayedPeriod.nextMonth:", this.geoLinkedTimeOfDisplayedPeriod.nextMonth)
+
+    const nextTimePeriod = await fetch(
+      `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.nextYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.nextMonth}&gd=01&g2h=1&strict=1`
+    ).then((res) => res.json());
+
+    const prevTimePeriod = await fetch(
+      `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.prevYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.prevMonth}&gd=01&g2h=1&strict=1`
+    ).then((res) => res.json());
+
+    console.log(nextTimePeriod.heDateParts)
+    console.log(prevTimePeriod.heDateParts)
+
+    result.nextYear = nextTimePeriod.heDateParts.y;
+    result.nextMonth = nextTimePeriod.heDateParts.m;
+    result.prevYear = prevTimePeriod.heDateParts.y;
+    result.prevMonth = prevTimePeriod.heDateParts.m;
+
+    this.hebLinkedTimeOfDisplayedPeriod.set(result);
+    console.log(this.hebLinkedTimeOfDisplayedPeriod())
   }
 
   async setChosenDateHeb() {
     const currentDateHeb = await fetch(
-      `https://www.hebcal.com/converter?cfg=json&gy=${this.chosenDateGeo().y}&gm=${this.chosenDateGeo().m}&gd=01&g2h=1&strict=1`
+      `https://www.hebcal.com/converter?cfg=json&gy=${
+        this.chosenDateGeo().y
+      }&gm=${this.chosenDateGeo().m}&gd=01&g2h=1&strict=1`
     ).then((res) => res.json());
 
     this.chosenDateHeb.set({
@@ -243,12 +287,12 @@ export class CalendarService {
   }
 
   setChosenDateGeo(year, month) {
-    this.chosenDateGeo.update(prev => ({
+    this.chosenDateGeo.update((prev) => ({
       y: year,
       m: month,
-      d: prev.d
+      d: prev.d,
     }));
-    this.setChosenDateHeb();    
+    this.setChosenDateHeb();
   }
 
   // get hebLinkedTimeOfDisplayedPeriod() {

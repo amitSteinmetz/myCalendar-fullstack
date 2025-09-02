@@ -7,7 +7,7 @@
           calendarService.chosenDateHeb().y
         : calendarService.chosenDateGeo().y +
           " " +
-          geoMonthsNames[getTimeAsInt(calendarService.chosenDateGeo().m) - 1]
+          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
     }}
   </div>
   <div class="current-time-details__date fs-md">
@@ -18,7 +18,7 @@
           calendarService.chosenDateHeb().y
         : calendarService.chosenDateGeo().y +
           " " +
-          geoMonthsNames[getTimeAsInt(calendarService.chosenDateGeo().m) - 1]
+          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
     }}
   </div>
   <div class="current-time-details__mobile-subtitle">
@@ -52,9 +52,7 @@
           {{
             calendarService.isHebrewMode
               ? calendarService.chosenDateHeb().m
-              : geoMonthsNames[
-                  getTimeAsInt(calendarService.chosenDateGeo().m) - 1
-                ]
+              : geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
           }}
         </div>
       </div>
@@ -75,7 +73,11 @@
           )
         "
       >
-        {{ calendarService.isHebrewMode ? "" : calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear }}
+        {{
+          calendarService.isHebrewMode
+            ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.prevYear
+            : calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear
+        }}
       </div>
     </button>
 
@@ -94,14 +96,47 @@
           )
         "
       >
-        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth }}
+        {{
+          calendarService.isHebrewMode
+            ? hebMonthNames[getIndexOfCurrHebMonth() - 1]
+            : 
+            geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth - 1 + 12) % 12]
+        }}
       </div>
     </button>
 
     <div class="time-navigation-content">
-      <div class="current-time-details__date fw-bold">אוגוסט 2025</div>
+      <div class="current-time-details__date fw-bold">
+        {{
+          calendarService.isHebrewMode
+            ? calendarService.chosenDateHeb().m +
+              " ה'" +
+              calendarService.chosenDateHeb().y
+            : calendarService.chosenDateGeo().y +
+              " " +
+              geoMonthsNames[
+                (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12
+              ]
+        }}
+      </div>
       <div class="current-time-details__date fs-sm fw-bold">
-        אב - אלול ה'תשפ"ה
+        {{
+          !calendarService.isHebrewMode
+            ? hebMonthNames[(getIndexOfCurrHebMonth() - 1 + 12) % 12] +
+              " - " +
+              calendarService.chosenDateHeb()?.m +
+              " ה'" +
+              calendarService.chosenDateHeb().y
+            : calendarService.chosenDateGeo().y +
+              " " +
+              geoMonthsNames[
+                (getTimeAsInt(calendarService.chosenDateGeo().m) - 2 + 12) % 12
+              ] +
+              " - " +
+              geoMonthsNames[
+                (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12
+              ]
+        }}
       </div>
     </div>
 
@@ -120,7 +155,7 @@
           )
         "
       >
-        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth }}
+        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.nextMonth : geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth - 1 + 12) % 12] }}
       </div>
     </button>
 
@@ -139,7 +174,7 @@
           )
         "
       >
-        {{ calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
+        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.nextYear : calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
       </div>
     </button>
 
