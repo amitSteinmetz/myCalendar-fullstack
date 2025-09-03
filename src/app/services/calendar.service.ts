@@ -6,7 +6,13 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { CalendarDay, DateParts } from '../models/day.model';
-import { HDate } from '@hebcal/core';
+import {
+  HebrewCalendar,
+  HDate,
+  Location,
+  Event,
+  CalOptions,
+} from '@hebcal/core';
 
 @Injectable({
   providedIn: 'root',
@@ -26,23 +32,50 @@ export class CalendarService {
     this.chosenDateGeo.set({
       y: currentYear,
       m: currentMonth,
+      d: '01',
     });
 
     const currHebDate = new HDate();
     this.chosenDateHeb.set({
       y: currHebDate.yy.toString(),
       m: currHebDate.mm.toString(),
+      d: '01',
     });
 
     effect(() => {
       this.buildMonthToDisplay();
-    })
+    });
   }
 
   async buildMonthToDisplay() {
     this.daysToDisplaySignal.set([]);
+    let apiDates;
 
-    const apiDates = await this.fetchApiTimesByMonth();
+    if (this.isHebrewMode) {
+      // findEdges
+      const { startEdge, endEdge } = this.findEdgeHebrewMonthDays();
+      let startEdgeFormatted =
+        startEdge.y +
+        '-' +
+        this.formatDatePart(parseInt(startEdge.m)) +
+        '-' +
+        this.formatDatePart(parseInt(startEdge.d));
+      let endEdgeFormatted =
+        endEdge.y +
+        '-' +
+        this.formatDatePart(parseInt(endEdge.m)) +
+        '-' +
+        this.formatDatePart(parseInt(endEdge.d));
+
+      // Fetch by edges
+      console.log(startEdge, endEdge);
+      apiDates = await this.fetchApiTimesByRange(
+        startEdgeFormatted,
+        endEdgeFormatted
+      );
+    } else apiDates = await this.fetchApiTimesByMonth();
+    console.log(apiDates);
+
     let constructeddaysToDisplay =
       this.constructdaysToDisplayFromApiResponse(apiDates);
     this.daysToDisplaySignal.update((curr) => [
@@ -63,7 +96,6 @@ export class CalendarService {
         ...curr,
       ]);
     }
-
     const lastDate = this.findEdgeDateToDisplay(false);
     if (lastDate != null) {
       const apiLastWeekDates = await this.fetchApiTimesByRange(
@@ -73,6 +105,7 @@ export class CalendarService {
         ),
         lastDate
       );
+      console.log(apiLastWeekDates);
       constructeddaysToDisplay =
         this.constructdaysToDisplayFromApiResponse(apiLastWeekDates);
 
@@ -85,17 +118,45 @@ export class CalendarService {
 
   //** Fetch from API functions **//
   async fetchApiTimesByMonth() {
-    
-
-
     return await fetch(
-      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${this.chosenDateGeo().y}&month=${this.chosenDateGeo().m}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
+      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${
+        this.chosenDateGeo().y
+      }&month=${
+        this.chosenDateGeo().m
+      }&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
     ).then((res) => res.json());
   }
   async fetchApiTimesByRange(startDate: string, endDate: string) {
     return await fetch(
       `https://www.hebcal.com/hebcal?v=1&cfg=json&start=${startDate}&end=${endDate}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
     ).then((res) => res.json());
+  }
+
+  findEdgeHebrewMonthDays() {
+    const startEdgeHeDate = new HDate(
+      1,
+      this.chosenDateHeb().m,
+      parseInt(this.chosenDateHeb().y)
+    );
+    const endEdgeHeDate = startEdgeHeDate.add(
+      startEdgeHeDate.daysInMonth() - 1,
+      'd'
+    );
+    let destructedStartEdgeHeDate: DateParts = {
+      y: startEdgeHeDate.greg().getFullYear() + '',
+      m: startEdgeHeDate.greg().getMonth() + 1 + '',
+      d: startEdgeHeDate.greg().getDate() + '',
+    };
+    let destructedEndEdgeHeDate: DateParts = {
+      y: endEdgeHeDate.greg().getFullYear() + '',
+      m: endEdgeHeDate.greg().getMonth() + 1 + '',
+      d: endEdgeHeDate.greg().getDate() + '',
+    };
+
+    return {
+      startEdge: destructedStartEdgeHeDate,
+      endEdge: destructedEndEdgeHeDate,
+    };
   }
 
   //** Construct days to display from API response **//
@@ -183,13 +244,14 @@ export class CalendarService {
     const edgeDay = isStartDate
       ? this.daysToDisplaySignal()[0]
       : this.daysToDisplaySignal()[this.daysToDisplaySignal().length - 1];
+    console.log(edgeDay);
 
     if (
       (isStartDate && edgeDay.dayInWeek !== 0) ||
       (!isStartDate && edgeDay.dayInWeek !== 6)
     ) {
       const date = new Date(
-        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-01'
+        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-' + edgeDay.geoDate.d
       );
       const edgeDateIndex =
         date.getDate() -
@@ -207,7 +269,11 @@ export class CalendarService {
   }
   getComputedGeoDate(dayToDisplay: CalendarDay, isFirstDayInMonth) {
     const date = new Date(
-      dayToDisplay.geoDate.y + '-' + dayToDisplay.geoDate.m + '-01'
+      dayToDisplay.geoDate.y +
+        '-' +
+        dayToDisplay.geoDate.m +
+        '-' +
+        dayToDisplay.geoDate.d
     );
     let incNumber = isFirstDayInMonth ? -1 : 1;
     date.setDate(date.getDate() + incNumber);
@@ -221,6 +287,7 @@ export class CalendarService {
 
   toggleHebrewMode(isHebrewMode: boolean) {
     this.isHebrewMode = isHebrewMode;
+    this.buildMonthToDisplay();
   }
 
   //** Getters & Setters **/
@@ -261,11 +328,11 @@ export class CalendarService {
     this.chosenDateGeo.update((prev) => ({
       y: year,
       m: month,
+      d: '01',
     }));
     // this.setChosenDateHeb();
   }
 
-  
   // async setChosenDateHeb() {
   //   const currentDateHeb = await fetch(
   //     `https://www.hebcal.com/converter?cfg=json&gy=${
@@ -370,5 +437,4 @@ export class CalendarService {
 
   //     // this.hebLinkedTimeOfDisplayedPeriod.set(result);
   //   }
-
 }

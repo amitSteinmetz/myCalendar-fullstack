@@ -75,8 +75,8 @@
       >
         {{
           calendarService.isHebrewMode
-            ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.prevYear
-            : calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear
+            ? calendarService.hebLinkedTimeOfDisplayedPeriod.prevYear
+            : ""
         }}
       </div>
     </button>
@@ -155,7 +155,7 @@
           )
         "
       >
-        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.nextMonth : geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth - 1 + 12) % 12] }}
+        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod.nextMonth : geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth - 1 + 12) % 12] }}
       </div>
     </button>
 
@@ -174,7 +174,7 @@
           )
         "
       >
-        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod()?.nextYear : calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
+        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod.nextYear : calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
       </div>
     </button>
 

@@ -31,7 +31,7 @@ export class TimeNavigationComponent {
 
   onChangeTimePeriodToDisplayButtonClicked(year, month) {
     this.calendarService.setChosenDateGeo(year, month);
-    this.calendarService.buildMonthToDisplay(year, month);
+    this.calendarService.buildMonthToDisplay();
   }
 
   getIndexOfCurrHebMonth() {

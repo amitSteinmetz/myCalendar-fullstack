@@ -11,4 +11,5 @@ export interface CalendarDay {
 export interface DateParts {
   m: string;
   y: string;
+  d: string;
 }
