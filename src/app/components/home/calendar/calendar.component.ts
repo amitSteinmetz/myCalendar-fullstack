@@ -19,7 +19,7 @@ export class CalendarComponent implements OnInit {
   constructor(public calendarService: CalendarService) {}
 
   ngOnInit(): void {
-    this.calendarService.buildMonthToDisplay();
+    // this.calendarService.buildMonthToDisplay();
   }
 
   get daysToDisplay(): CalendarDay[] {

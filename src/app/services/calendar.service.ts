@@ -5,7 +5,8 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { CalendarDay, DayParts } from '../models/day.model';
+import { CalendarDay, DateParts } from '../models/day.model';
+import { HDate } from '@hebcal/core';
 
 @Injectable({
   providedIn: 'root',
@@ -13,80 +14,35 @@ import { CalendarDay, DayParts } from '../models/day.model';
 export class CalendarService {
   daysToDisplaySignal: WritableSignal<CalendarDay[]> = signal([]);
   isHebrewMode: boolean = false;
-  chosenDateGeo: WritableSignal<DayParts> = signal(null);
-  chosenDateHeb: WritableSignal<DayParts> = signal(null);
-  hebLinkedTimeOfDisplayedPeriod: WritableSignal<any> = signal(null);
+  chosenDateGeo: WritableSignal<DateParts> = signal(null);
+  chosenDateHeb: WritableSignal<DateParts> = signal(null);
 
   constructor() {
     const now = new Date();
     const currentYear = now.getFullYear().toString();
     const currentMonth = (now.getMonth() + 1).toString();
 
+    // Init current georgian and hebrew month and year according to current time //
     this.chosenDateGeo.set({
       y: currentYear,
       m: currentMonth,
-      d: now.getDate.toString(),
     });
 
-    this.setChosenDateHeb();
+    const currHebDate = new HDate();
+    this.chosenDateHeb.set({
+      y: currHebDate.yy.toString(),
+      m: currHebDate.mm.toString(),
+    });
 
     effect(() => {
-      console.log("effect is running")
-      this.chosenDateGeo();
-
-      if (this.chosenDateGeo()) {
-        this.fetchHebLinkedTimeOfDisplayedPeriod();
-      }
-    });
+      this.buildMonthToDisplay();
+    })
   }
 
-  async fetchHebLinkedTimeOfDisplayedPeriod() {
-    console.log("effect callback is running")
-    let result: any = {};
-
-    console.log("this.geoLinkedTimeOfDisplayedPeriod.nextYear:", this.geoLinkedTimeOfDisplayedPeriod.nextYear)
-    console.log("this.geoLinkedTimeOfDisplayedPeriod.nextMonth:", this.geoLinkedTimeOfDisplayedPeriod.nextMonth)
-
-    const nextTimePeriod = await fetch(
-      `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.nextYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.nextMonth}&gd=01&g2h=1&strict=1`
-    ).then((res) => res.json());
-
-    const prevTimePeriod = await fetch(
-      `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.prevYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.prevMonth}&gd=01&g2h=1&strict=1`
-    ).then((res) => res.json());
-
-    console.log(nextTimePeriod.heDateParts)
-    console.log(prevTimePeriod.heDateParts)
-
-    result.nextYear = nextTimePeriod.heDateParts.y;
-    result.nextMonth = nextTimePeriod.heDateParts.m;
-    result.prevYear = prevTimePeriod.heDateParts.y;
-    result.prevMonth = prevTimePeriod.heDateParts.m;
-
-    this.hebLinkedTimeOfDisplayedPeriod.set(result);
-    console.log(this.hebLinkedTimeOfDisplayedPeriod())
-  }
-
-  async setChosenDateHeb() {
-    const currentDateHeb = await fetch(
-      `https://www.hebcal.com/converter?cfg=json&gy=${
-        this.chosenDateGeo().y
-      }&gm=${this.chosenDateGeo().m}&gd=01&g2h=1&strict=1`
-    ).then((res) => res.json());
-
-    this.chosenDateHeb.set({
-      y: currentDateHeb.heDateParts.y,
-      m: currentDateHeb.heDateParts.m,
-      d: currentDateHeb.heDateParts.d,
-    });
-  }
-
-  async buildMonthToDisplay(year?, month?) {
+  async buildMonthToDisplay() {
     this.daysToDisplaySignal.set([]);
-    let apiYearArg = year == null ? this.chosenDateGeo().y : year;
-    let apiMonthArg = year == null ? this.chosenDateGeo().m : month;
 
-    const apiDates = await this.fetchApiTimesByMonth(apiYearArg, apiMonthArg);
+    const apiDates = await this.fetchApiTimesByMonth();
     let constructeddaysToDisplay =
       this.constructdaysToDisplayFromApiResponse(apiDates);
     this.daysToDisplaySignal.update((curr) => [
@@ -128,9 +84,12 @@ export class CalendarService {
   }
 
   //** Fetch from API functions **//
-  async fetchApiTimesByMonth(year, month) {
+  async fetchApiTimesByMonth() {
+    
+
+
     return await fetch(
-      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${year}&month=${month}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
+      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${this.chosenDateGeo().y}&month=${this.chosenDateGeo().m}&d=on&maj=on&min=on&mod=on&nx=on&ss=on&mf=on&s=on&leyning=off&i=on&c=on&M=on&geo=geoname&geonameid=293397`
     ).then((res) => res.json());
   }
   async fetchApiTimesByRange(startDate: string, endDate: string) {
@@ -230,7 +189,7 @@ export class CalendarService {
       (!isStartDate && edgeDay.dayInWeek !== 6)
     ) {
       const date = new Date(
-        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-' + edgeDay.geoDate.d
+        edgeDay.geoDate.y + '-' + edgeDay.geoDate.m + '-01'
       );
       const edgeDateIndex =
         date.getDate() -
@@ -248,11 +207,7 @@ export class CalendarService {
   }
   getComputedGeoDate(dayToDisplay: CalendarDay, isFirstDayInMonth) {
     const date = new Date(
-      dayToDisplay.geoDate.y +
-        '-' +
-        dayToDisplay.geoDate.m +
-        '-' +
-        dayToDisplay.geoDate.d
+      dayToDisplay.geoDate.y + '-' + dayToDisplay.geoDate.m + '-01'
     );
     let incNumber = isFirstDayInMonth ? -1 : 1;
     date.setDate(date.getDate() + incNumber);
@@ -286,14 +241,44 @@ export class CalendarService {
     return result;
   }
 
+  get hebLinkedTimeOfDisplayedPeriod() {
+    let result: any = {};
+    const hDate = new HDate(
+      1,
+      this.chosenDateHeb().m,
+      parseInt(this.chosenDateHeb().y)
+    );
+
+    result.prevYear = parseInt(this.chosenDateHeb().y) - 1;
+    result.nextYear = parseInt(this.chosenDateHeb().y) + 1;
+    result.prevMonth = hDate.subtract(1, 'M').getMonth();
+    result.nextMonth = hDate.add(1, 'M').getMonth();
+
+    return result;
+  }
+
   setChosenDateGeo(year, month) {
     this.chosenDateGeo.update((prev) => ({
       y: year,
       m: month,
-      d: prev.d,
     }));
-    this.setChosenDateHeb();
+    // this.setChosenDateHeb();
   }
+
+  
+  // async setChosenDateHeb() {
+  //   const currentDateHeb = await fetch(
+  //     `https://www.hebcal.com/converter?cfg=json&gy=${
+  //       this.chosenDateGeo().y
+  //     }&gm=${this.chosenDateGeo().m}&gd=01&g2h=1&strict=1`
+  //   ).then((res) => res.json());
+  //   console.log('currentDateHeb: ', currentDateHeb);
+
+  //   this.chosenDateHeb.set({
+  //     y: currentDateHeb.hy,
+  //     m: currentDateHeb.heDateParts.m,
+  //   });
+  // }
 
   // get hebLinkedTimeOfDisplayedPeriod() {
   //   let result: any = {};
@@ -313,4 +298,77 @@ export class CalendarService {
 
   //   return result;
   // }
+
+  //    async fetchHebLinkedTimeOfDisplayedPeriod() {
+  //     console.log('effect callback is running');
+  //     let result: any = {};
+
+  //     // find whole georgian time corresponding to the first day of current heberw month and year - api call for converter
+  //     const geoDayMatchingToFirstDayOfHebMonth = await fetch(
+  //       `https://www.hebcal.com/converter?cfg=json&hy=${
+  //         this.chosenDateHeb().y
+  //       }&hm=${this.chosenDateHeb().m}&hd=01&h2g=1&strict=1`
+  //     ).then((res) => res.json());
+  //     console.log(geoDayMatchingToFirstDayOfHebMonth);
+
+  //     // Find the prev georgian day of geoDayMatchingToFirstDayOfHebMonth - using DateTime library functions
+  //     const date = new Date(
+  //       geoDayMatchingToFirstDayOfHebMonth.gy,
+  //       geoDayMatchingToFirstDayOfHebMonth.gm - 1,
+  //       geoDayMatchingToFirstDayOfHebMonth.gd - 1
+  //     );
+  //     console.log(date);
+
+  //     // Find corresponding hebrew time of prev georgian date - api call for converter
+  //     const prevMonth = await fetch(
+  //       `https://www.hebcal.com/converter?cfg=json&gy=${date.getFullYear()}&gm=${
+  //         date.getMonth() + 1
+  //       }&gd=${date.getDate()}&g2h=1&strict=1`
+  //     ).then((res) => res.json());
+  //     console.log(prevMonth);
+
+  //     //// Similar proccess with last day of current hebrew month: ////
+
+  //     // Find the last day of heb month
+
+  //     // find whole georgian time corresponding to the last day of current heberw month and year - api call for converter
+  //     // const geoDayMatchingToLastDayOfHebMonth = await fetch(
+  //     //   `https://www.hebcal.com/converter?cfg=json&hy=${
+  //     //     this.chosenDateHeb().y
+  //     //   }&hm=${this.chosenDateHeb().m}&hd=-1&h2g=1&strict=1`
+  //     // ).then((res) => res.json());
+  //     // console.log(geoDayMatchingToLastDayOfHebMonth);
+
+  //     // Find the prev georgian day of geoDayMatchingToFirstDayOfHebMonth - using DateTime library functions
+  //     // const date = new Date(
+  //     //   geoDayMatchingToFirstDayOfHebMonth.gy,
+  //     //   geoDayMatchingToFirstDayOfHebMonth.gm - 1,
+  //     //   geoDayMatchingToFirstDayOfHebMonth.gd - 1
+  //     // );
+  //     // console.log(date);
+
+  //     // Find corresponding hebrew time of prev georgian date - api call for converter
+  //     // const prevMonth = await fetch(
+  //     //   `https://www.hebcal.com/converter?cfg=json&gy=${
+  //     //     date.getFullYear()
+  //     //   }&gm=${date.getMonth() + 1}&gd=${date.getDate()}&g2h=1&strict=1`
+  //     // ).then((res) => res.json());
+  //     // console.log(prevMonth)
+
+  //     // const nextTimePeriod = await fetch(
+  //     //   `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.nextYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.nextMonth}&gd=01&g2h=1&strict=1`
+  //     // ).then((res) => res.json());
+
+  //     // const prevTimePeriod = await fetch(
+  //     //   `https://www.hebcal.com/converter?cfg=json&gy=${this.geoLinkedTimeOfDisplayedPeriod.prevYear}&gm=${this.geoLinkedTimeOfDisplayedPeriod.prevMonth}&gd=01&g2h=1&strict=1`
+  //     // ).then((res) => res.json());
+
+  //     // result.nextYear = nextTimePeriod.heDateParts.y;
+  //     // result.nextMonth = nextTimePeriod.heDateParts.m;
+  //     // result.prevYear = prevTimePeriod.heDateParts.y;
+  //     // result.prevMonth = prevTimePeriod.heDateParts.m;
+
+  //     // this.hebLinkedTimeOfDisplayedPeriod.set(result);
+  //   }
+
 }

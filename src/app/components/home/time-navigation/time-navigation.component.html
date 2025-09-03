@@ -2,12 +2,12 @@
   <div class="current-time-details__date fs-xxl fw-bold">
     {{
       calendarService.isHebrewMode
-        ? calendarService.chosenDateHeb().m +
+        ? calendarService.chosenDateHeb()?.m +
           " ה'" +
-          calendarService.chosenDateHeb().y
-        : calendarService.chosenDateGeo().y +
+          calendarService.chosenDateHeb()?.y
+        : calendarService.chosenDateGeo()?.y +
           " " +
-          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
+          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo()?.m) - 1 + 12) % 12]
     }}
   </div>
   <div class="current-time-details__date fs-md">
@@ -15,8 +15,8 @@
       !calendarService.isHebrewMode
         ? calendarService.chosenDateHeb()?.m +
           " ה'" +
-          calendarService.chosenDateHeb().y
-        : calendarService.chosenDateGeo().y +
+          calendarService.chosenDateHeb()?.y
+        : calendarService.chosenDateGeo()?.y +
           " " +
           geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
     }}
@@ -109,13 +109,13 @@
       <div class="current-time-details__date fw-bold">
         {{
           calendarService.isHebrewMode
-            ? calendarService.chosenDateHeb().m +
+            ? calendarService.chosenDateHeb()?.m +
               " ה'" +
-              calendarService.chosenDateHeb().y
-            : calendarService.chosenDateGeo().y +
+              calendarService.chosenDateHeb()?.y
+            : calendarService.chosenDateGeo()?.y +
               " " +
               geoMonthsNames[
-                (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12
+                (getTimeAsInt(calendarService.chosenDateGeo()?.m) - 1 + 12) % 12
               ]
         }}
       </div>
@@ -126,15 +126,15 @@
               " - " +
               calendarService.chosenDateHeb()?.m +
               " ה'" +
-              calendarService.chosenDateHeb().y
-            : calendarService.chosenDateGeo().y +
+              calendarService.chosenDateHeb()?.y
+            : calendarService.chosenDateGeo()?.y +
               " " +
               geoMonthsNames[
-                (getTimeAsInt(calendarService.chosenDateGeo().m) - 2 + 12) % 12
+                (getTimeAsInt(calendarService.chosenDateGeo()?.m) - 2 + 12) % 12
               ] +
               " - " +
               geoMonthsNames[
-                (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12
+                (getTimeAsInt(calendarService.chosenDateGeo()?.m) - 1 + 12) % 12
               ]
         }}
       </div>

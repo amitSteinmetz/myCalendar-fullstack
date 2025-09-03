@@ -2,14 +2,13 @@ import { Shabbat } from './shabbat.model';
 
 export interface CalendarDay {
   dayInWeek: number;
-  heDate: DayParts;
-  geoDate: DayParts;
+  heDate: DateParts;
+  geoDate: DateParts;
   shabbatEvents?: Shabbat;
   specialEvents?: string[];
 }
 
-export interface DayParts {
-  d: string;
+export interface DateParts {
   m: string;
   y: string;
 }

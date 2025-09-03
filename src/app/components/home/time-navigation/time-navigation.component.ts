@@ -35,7 +35,7 @@ export class TimeNavigationComponent {
   }
 
   getIndexOfCurrHebMonth() {
-    return this.hebMonthNames.indexOf(this.calendarService.chosenDateHeb().m);
+    return this.hebMonthNames.indexOf(this.calendarService.chosenDateHeb()?.m);
   }
 
   getTimeAsInt(time: string) {
