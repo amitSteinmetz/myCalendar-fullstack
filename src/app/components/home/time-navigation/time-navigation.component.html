@@ -2,24 +2,29 @@
   <div class="current-time-details__date fs-xxl fw-bold">
     {{
       calendarService.isHebrewMode
-        ? calendarService.chosenDateHeb()?.m +
+        ? (calendarService.chosenDateHeb()?.m | hebTimeName : "month") +
           " ה'" +
-          calendarService.chosenDateHeb()?.y
+          (calendarService.chosenDateHeb()?.y | hebTimeName : "year")
         : calendarService.chosenDateGeo()?.y +
           " " +
-          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo()?.m) - 1 + 12) % 12]
+          geoMonthsNames[
+            (getTimeAsInt(calendarService.chosenDateGeo()?.m) - 1 + 12) % 12
+          ]
     }}
   </div>
   <div class="current-time-details__date fs-md">
-    {{
+    <!-- {{
       !calendarService.isHebrewMode
-        ? calendarService.chosenDateHeb()?.m +
-          " ה'" +
-          calendarService.chosenDateHeb()?.y
+        ? (calendarService.getEdgePeriodsOnCalendar(true)?.startTime | hebTimeName : "month") +
+          " ה'" + (calendarService.getEdgePeriodsOnCalendar(false)?.startTime | hebTimeName : "year") + " " +
+          (calendarService.getEdgePeriodsOnCalendar(true)?.endTime | hebTimeName : "month") +
+          " ה'" + (calendarService.getEdgePeriodsOnCalendar(false)?.endTime | hebTimeName : "year") 
         : calendarService.chosenDateGeo()?.y +
           " " +
-          geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
-    }}
+          geoMonthsNames[
+            (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12
+          ]
+    }} -->
   </div>
   <div class="current-time-details__mobile-subtitle">
     הזמנים עבור: תל אביב
@@ -51,8 +56,11 @@
         <div class="btn-value" id="btn-value__month">
           {{
             calendarService.isHebrewMode
-              ? calendarService.chosenDateHeb().m
-              : geoMonthsNames[(getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) % 12]
+              ? (calendarService.chosenDateHeb().m | hebTimeName : "month")
+              : geoMonthsNames[
+                  (getTimeAsInt(calendarService.chosenDateGeo().m) - 1 + 12) %
+                    12
+                ]
           }}
         </div>
       </div>
@@ -67,16 +75,24 @@
       <div
         class="btn-value"
         (click)="
-          onChangeTimePeriodToDisplayButtonClicked(
-            calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear,
-            calendarService.chosenDateGeo().m
-          )
+          !calendarService.isHebrewMode
+            ? onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear,
+                calendarService.chosenDateGeo().m,
+                false
+              )
+            : onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.hebLinkedTimeOfDisplayedPeriod.prevYear,
+                calendarService.chosenDateHeb().m,
+                false
+              )
         "
       >
         {{
           calendarService.isHebrewMode
-            ? calendarService.hebLinkedTimeOfDisplayedPeriod.prevYear
-            : ""
+            ? (calendarService.hebLinkedTimeOfDisplayedPeriod.prevYear
+              | hebTimeName : "year")
+            : calendarService.geoLinkedTimeOfDisplayedPeriod.prevYear
         }}
       </div>
     </button>
@@ -90,17 +106,29 @@
       <div
         class="btn-value"
         (click)="
-          onChangeTimePeriodToDisplayButtonClicked(
-            calendarService.chosenDateGeo().y,
-            calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth
-          )
+          !calendarService.isHebrewMode
+            ? onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.chosenDateGeo().y,
+                calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth,
+                false
+              )
+            : onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.chosenDateHeb().y,
+                calendarService.hebLinkedTimeOfDisplayedPeriod.prevMonth,
+                false
+              )
         "
       >
         {{
           calendarService.isHebrewMode
-            ? hebMonthNames[getIndexOfCurrHebMonth() - 1]
-            : 
-            geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth - 1 + 12) % 12]
+            ? (calendarService.hebLinkedTimeOfDisplayedPeriod.prevMonth
+              | hebTimeName : "month")
+            : geoMonthsNames[
+                (calendarService.geoLinkedTimeOfDisplayedPeriod.prevMonth -
+                  1 +
+                  12) %
+                  12
+              ]
         }}
       </div>
     </button>
@@ -109,9 +137,9 @@
       <div class="current-time-details__date fw-bold">
         {{
           calendarService.isHebrewMode
-            ? calendarService.chosenDateHeb()?.m +
+            ? (calendarService.chosenDateHeb()?.m | hebTimeName : "month") +
               " ה'" +
-              calendarService.chosenDateHeb()?.y
+              (calendarService.chosenDateHeb()?.y | hebTimeName : "year")
             : calendarService.chosenDateGeo()?.y +
               " " +
               geoMonthsNames[
@@ -122,11 +150,9 @@
       <div class="current-time-details__date fs-sm fw-bold">
         {{
           !calendarService.isHebrewMode
-            ? hebMonthNames[(getIndexOfCurrHebMonth() - 1 + 12) % 12] +
-              " - " +
-              calendarService.chosenDateHeb()?.m +
+            ? (calendarService.chosenDateHeb()?.m | hebTimeName : "month") +
               " ה'" +
-              calendarService.chosenDateHeb()?.y
+              (calendarService.chosenDateHeb()?.y | hebTimeName : "year")
             : calendarService.chosenDateGeo()?.y +
               " " +
               geoMonthsNames[
@@ -149,13 +175,30 @@
       <div
         class="btn-value"
         (click)="
-          onChangeTimePeriodToDisplayButtonClicked(
-            calendarService.chosenDateGeo().y,
-            calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth
-          )
+          !calendarService.isHebrewMode
+            ? onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.chosenDateGeo().y,
+                calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth,
+                true
+              )
+            : onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.chosenDateHeb().y,
+                calendarService.hebLinkedTimeOfDisplayedPeriod.nextMonth,
+                true
+              )
         "
       >
-        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod.nextMonth : geoMonthsNames[(calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth - 1 + 12) % 12] }}
+        {{
+          calendarService.isHebrewMode
+            ? (calendarService.hebLinkedTimeOfDisplayedPeriod.nextMonth
+              | hebTimeName : "month")
+            : geoMonthsNames[
+                (calendarService.geoLinkedTimeOfDisplayedPeriod.nextMonth -
+                  1 +
+                  12) %
+                  12
+              ]
+        }}
       </div>
     </button>
 
@@ -168,13 +211,25 @@
       <div
         class="btn-value"
         (click)="
-          onChangeTimePeriodToDisplayButtonClicked(
-            calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear,
-            calendarService.chosenDateGeo().m
-          )
+          !calendarService.isHebrewMode
+            ? onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear,
+                calendarService.chosenDateGeo().m,
+                true
+              )
+            : onChangeTimePeriodToDisplayButtonClicked(
+                calendarService.hebLinkedTimeOfDisplayedPeriod.nextYear,
+                calendarService.chosenDateHeb().m,
+                true
+              )
         "
       >
-        {{ calendarService.isHebrewMode ? calendarService.hebLinkedTimeOfDisplayedPeriod.nextYear : calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear }}
+        {{
+          calendarService.isHebrewMode
+            ? (calendarService.hebLinkedTimeOfDisplayedPeriod.nextYear
+              | hebTimeName : "year")
+            : calendarService.geoLinkedTimeOfDisplayedPeriod.nextYear
+        }}
       </div>
     </button>
 

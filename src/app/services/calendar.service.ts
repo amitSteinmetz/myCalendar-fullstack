@@ -41,8 +41,9 @@ export class CalendarService {
       m: currHebDate.mm.toString(),
       d: '01',
     });
-
+    console.log('Initial geo month: ', this.chosenDateGeo().m);
     effect(() => {
+      console.log('Step 2 - effect is running...');
       this.buildMonthToDisplay();
     });
   }
@@ -54,6 +55,12 @@ export class CalendarService {
     if (this.isHebrewMode) {
       // findEdges
       const { startEdge, endEdge } = this.findEdgeHebrewMonthDays();
+      console.log(
+        'Step 2 in Hebrew mode, edges to display: \nstartEdgeInGeoFormat: ',
+        startEdge,
+        '\nendEdgeInGeoFormat: ',
+        endEdge
+      );
       let startEdgeFormatted =
         startEdge.y +
         '-' +
@@ -68,13 +75,18 @@ export class CalendarService {
         this.formatDatePart(parseInt(endEdge.d));
 
       // Fetch by edges
-      console.log(startEdge, endEdge);
       apiDates = await this.fetchApiTimesByRange(
         startEdgeFormatted,
         endEdgeFormatted
       );
-    } else apiDates = await this.fetchApiTimesByMonth();
-    console.log(apiDates);
+      console.log('Step 3 in hebrew mode - the dates to display: \n', apiDates);
+    } else {
+      apiDates = await this.fetchApiTimesByMonth();
+      console.log(
+        'Step 3 in georgian mode - the dates to display: \n',
+        apiDates
+      );
+    }
 
     let constructeddaysToDisplay =
       this.constructdaysToDisplayFromApiResponse(apiDates);
@@ -105,7 +117,6 @@ export class CalendarService {
         ),
         lastDate
       );
-      console.log(apiLastWeekDates);
       constructeddaysToDisplay =
         this.constructdaysToDisplayFromApiResponse(apiLastWeekDates);
 
@@ -118,6 +129,12 @@ export class CalendarService {
 
   //** Fetch from API functions **//
   async fetchApiTimesByMonth() {
+    console.log(
+      'Fetch with time: \nyear: ',
+      this.chosenDateGeo().y,
+      '\nmonth: ',
+      this.chosenDateGeo().m
+    );
     return await fetch(
       `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${
         this.chosenDateGeo().y
@@ -244,7 +261,6 @@ export class CalendarService {
     const edgeDay = isStartDate
       ? this.daysToDisplaySignal()[0]
       : this.daysToDisplaySignal()[this.daysToDisplaySignal().length - 1];
-    console.log(edgeDay);
 
     if (
       (isStartDate && edgeDay.dayInWeek !== 0) ||
@@ -297,12 +313,12 @@ export class CalendarService {
     result.nextYear = parseInt(this.chosenDateGeo().y) + 1;
     result.prevYear = parseInt(this.chosenDateGeo().y) - 1;
     result.nextMonth =
-      parseInt(this.chosenDateGeo().m) === 11
-        ? 0
+      parseInt(this.chosenDateGeo().m) === 12
+        ? 1
         : parseInt(this.chosenDateGeo().m) + 1;
     result.prevMonth =
-      parseInt(this.chosenDateGeo().m) === 0
-        ? 11
+      parseInt(this.chosenDateGeo().m) === 1
+        ? 12
         : parseInt(this.chosenDateGeo().m) - 1;
 
     return result;
@@ -311,8 +327,8 @@ export class CalendarService {
   get hebLinkedTimeOfDisplayedPeriod() {
     let result: any = {};
     const hDate = new HDate(
-      1,
-      this.chosenDateHeb().m,
+      10,
+      parseInt(this.chosenDateHeb().m),
       parseInt(this.chosenDateHeb().y)
     );
 
@@ -324,13 +340,78 @@ export class CalendarService {
     return result;
   }
 
+  getEdgePeriodsOnCalendar(isMonth: boolean) {
+    let startTime;
+    let endTime;
+
+    if (this.isHebrewMode) {
+      startTime = isMonth
+        ? this.daysToDisplaySignal()[0]?.heDate.m
+        : this.daysToDisplaySignal()[0]?.heDate.y;
+      endTime = isMonth
+        ? this.daysToDisplaySignal()[-1]?.heDate.m
+        : this.daysToDisplaySignal()[-1]?.heDate.y;
+    } else {
+      startTime = isMonth
+        ? this.daysToDisplaySignal()[0]?.geoDate.m
+        : this.daysToDisplaySignal()[0]?.geoDate.y;
+      endTime = isMonth
+        ? this.daysToDisplaySignal()[-1]?.geoDate.m
+        : this.daysToDisplaySignal()[-1]?.geoDate.y;
+    }
+    console.log({ startTime, endTime });
+    return { startTime, endTime };
+  }
+
   setChosenDateGeo(year, month) {
-    this.chosenDateGeo.update((prev) => ({
-      y: year,
-      m: month,
-      d: '01',
-    }));
-    // this.setChosenDateHeb();
+    if (!this.isHebrewMode) {
+      this.chosenDateGeo.set({
+        y: year,
+        m: month,
+        d: '01',
+      });
+
+      const hDate = new HDate(
+        new Date(
+          parseInt(this.chosenDateGeo().y),
+          parseInt(this.chosenDateGeo().m) - 1,
+          1
+        )
+      );
+      this.chosenDateHeb.set({
+        y: hDate.yy.toString(),
+        m: hDate.mm.toString(),
+        d: '01',
+      });
+
+      console.log(
+        'Step 1 in georgian mode - set chosenDateGeo:\n',
+        this.chosenDateGeo()
+      );
+    } else {
+      console.log(parseInt(year), parseInt(month));
+      const hDate = new HDate(1, parseInt(month), parseInt(year));
+      console.log('hdate: ', hDate);
+      this.chosenDateHeb.set({
+        y: hDate.yy.toString(),
+        m: hDate.mm.toString(),
+        d: '01',
+      });
+
+      this.chosenDateGeo.set({
+        y: hDate.greg().getFullYear().toString(),
+        m: hDate.greg().getMonth() + 1 + '',
+        d: '01',
+      });
+      console.log(
+        'Step 1 in hebrew mode - set chosenDateHeb:\n',
+        this.chosenDateHeb()
+      );
+      console.log(
+        'Step 1.b - prev and next months of chosenDateHeb:\n',
+        this.hebLinkedTimeOfDisplayedPeriod
+      );
+    }
   }
 
   // async setChosenDateHeb() {
